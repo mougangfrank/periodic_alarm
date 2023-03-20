@@ -17,6 +17,7 @@ dependencies:
   android_alarm_manager_plus: ^2.1.1
   just_audio: ^0.9.32
   intl: ^0.18.0
+  timezone: ^0.9.1
 
 dev_dependencies:
   flutter_test:

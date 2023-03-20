@@ -1,6 +1,7 @@
 
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -111,7 +112,7 @@ class AlarmNotification {
 
     final hasPermission = await requestPermission();
     if (!hasPermission) {
-      print('[Alarm] Notification permission not granted');
+      debugPrint('[Alarm] Notification permission not granted');
       return;
     }
 
@@ -126,9 +127,9 @@ class AlarmNotification {
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
       );
-      print('[Alarm] Notification with id $id scheduled successfuly at $zdt');
+      debugPrint('[Alarm] Notification with id $id scheduled successfuly at $zdt');
     } catch (e) {
-      print('[Alarm] Schedule notification with id $id error: $e');
+      debugPrint('[Alarm] Schedule notification with id $id error: $e');
     }
   }
 
@@ -136,6 +137,6 @@ class AlarmNotification {
   /// when an alarm is overriden.
   Future<void> cancel(int id) async {
     await localNotif.cancel(id);
-    print('[Alarm] Notification with id $id canceled');
+    debugPrint('[Alarm] Notification with id $id canceled');
   }
 }

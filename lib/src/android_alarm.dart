@@ -265,7 +265,7 @@ class AndroidAlarm {
     var now = DateTime.now();
 
     final res = await AndroidAlarmManager.oneShotAt(
-      now.add(Duration(days: 1)),
+      now.add(const Duration(days: 1)),
       id,
       AndroidAlarm.playAlarm1,
       alarmClock: true,
@@ -287,9 +287,10 @@ class AndroidAlarm {
     );
 
     debugPrint(res
-        ? '${now.add(Duration(days: 1))} ve $id li alarm oluşturuldu.'
+        ? '${now.add(const Duration(days: 1))} ve $id li alarm oluşturuldu.'
         : 'Oluşturulamadı');
 
+    // ignore: unnecessary_string_interpolations
     if (data['${DateFormat("EEEE").format(now).toLowerCase()}']) {
       final audioPlayer = AudioPlayer();
       SendPort send = IsolateNameServer.lookupPortByName("$ringPort-$id")!;
