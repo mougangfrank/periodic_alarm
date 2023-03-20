@@ -86,7 +86,7 @@ class PeriodicAlarm {
 
     AlarmNotification.instance.cancel(id);
 
-    return await AndroidAlarm.stop(id);
+    return await AndroidAlarm.stop();
   }
 
   static Future<bool> cancelAlarm(int alarmId) async{

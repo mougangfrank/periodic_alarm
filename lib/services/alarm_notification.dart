@@ -1,8 +1,8 @@
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:periodic_alarm/src/android_alarm.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -28,7 +28,12 @@ class AlarmNotification {
       iOS: initializationSettingsIOS,
     );
 
-    await localNotif.initialize(initializationSettings);
+    await localNotif.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: (details) {
+        AndroidAlarm.stop();
+      },
+    );
     tz.initializeTimeZones();
   }
 
@@ -127,7 +132,8 @@ class AlarmNotification {
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
       );
-      debugPrint('[Alarm] Notification with id $id scheduled successfuly at $zdt');
+      debugPrint(
+          '[Alarm] Notification with id $id scheduled successfuly at $zdt');
     } catch (e) {
       debugPrint('[Alarm] Schedule notification with id $id error: $e');
     }

@@ -26,8 +26,10 @@ class _MyAppState extends State<MyApp> {
   Future<void> setAlarm() async {
     AlarmModel alarmModel = AlarmModel(
       id: 0,
-      dateTime: DateTime.now().add(Duration(seconds: 30)),
+      dateTime: DateTime.now(),
       assetAudioPath: 'assets/0.mp3',
+      notificationTitle: 'Alarm is calling',
+      notificationBody: 'Tap to turn off the alarm',
       monday: true,
     );
 
@@ -42,12 +44,16 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Switch(value: alarm,onChanged: (value){
-            alarm = value;
-            if(value){
-              setAlarm();
-            }
-          },),
+          child: Switch(
+            value: alarm,
+            onChanged: (value) {
+              alarm = value;
+              setState(() {});
+              if (value) {
+                setAlarm();
+              }
+            },
+          ),
         ),
       ),
     );

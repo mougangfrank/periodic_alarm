@@ -371,7 +371,8 @@ class AndroidAlarm {
     return res;
   }
 
-  static Future<bool> stop(int id) async {
+  @pragma('vm:entry-point')
+  static Future<bool> stop() async {
     bool res;
     try {
       final SendPort send = IsolateNameServer.lookupPortByName(stopPort)!;
@@ -382,7 +383,7 @@ class AndroidAlarm {
       res = false;
     }
 
-    if (!hasAnotherAlarm) stopNotificationOnKillService();
+    // if (!hasAnotherAlarm) stopNotificationOnKillService();
     return res;
   }
 
