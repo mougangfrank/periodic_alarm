@@ -81,10 +81,10 @@ class PeriodicAlarm {
         alarmModel.sunday);
   }
 
-  static Future<bool> stop(int id) async {
-    await AlarmStorage.unsaveAlarm(id);
+  static Future<bool> stop() async {
+    //await AlarmStorage.unsaveAlarm(id);
 
-    AlarmNotification.instance.cancel(id);
+    //AlarmNotification.instance.cancel(id);
 
     return await AndroidAlarm.stop();
   }

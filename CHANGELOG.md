@@ -1,3 +1,7 @@
+## 0.0.4
+
+* stop bug fixed
+
 ## 0.0.3
 
 * added alarm stop by clicking on notification
