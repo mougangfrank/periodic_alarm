@@ -50,6 +50,7 @@ class PeriodicAlarm {
       alarmModel.notificationTitle,
       alarmModel.notificationBody,
       alarmModel.enableNotificationOnKill,
+      alarmModel.active
     );
   }
 

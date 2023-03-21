@@ -30,10 +30,9 @@ class _MyAppState extends State<MyApp> {
         assetAudioPath: 'assets/0.mp3',
         notificationTitle: 'Alarm is calling',
         notificationBody: 'Tap to turn off the alarm',
-        tuesday: true,
-        active: true);
+        active: false);
 
-    PeriodicAlarm.setPeriodicAlarm(alarmModel: alarmModel);
+    PeriodicAlarm.setOneAlarm(alarmModel: alarmModel);
   }
 
   @override
