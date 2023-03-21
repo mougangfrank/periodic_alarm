@@ -1,10 +1,5 @@
 ## Getting Started
 
-### iOS installation steps
-
-To import your alarm audio(s), you will need to drag and drop your asset(s) to your `Runner` folder in Xcode. 
-I published a Gist to show you the steps to follow, and also give you a tip to save your app some weight using symbolic links. It's [right here](https://gist.github.com/gdelataillade/68834caacdd6727f1418e46788f70b53).
-
 ### Android installation steps
 
 In your `android/app/build.gradle`, make sure you have the following config:
