@@ -1,6 +1,6 @@
 name: periodic_alarm
 description: A Flutter periodic ve one shot alarm manager package for Android.
-version: 0.0.4
+version: 0.0.5
 homepage: https://github.com/cagridurmus/periodic_alarm
 
 environment:
