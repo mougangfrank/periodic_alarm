@@ -23,16 +23,16 @@ class AndroidAlarm {
   static bool get hasAnotherAlarm => AlarmStorage.getSavedAlarms().length > 1;
 
   static Future<bool> setOneAlarm(
-    int id,
-    DateTime dateTime,
-    void Function()? onRing,
-    String assetAudioPath,
-    bool loopAudio,
-    double fadeDuration,
-    String? notificationTitle,
-    String? notificationBody,
-    bool enableNotificationOnKill,
-  ) async {
+      int id,
+      DateTime dateTime,
+      void Function()? onRing,
+      String assetAudioPath,
+      bool loopAudio,
+      double fadeDuration,
+      String? notificationTitle,
+      String? notificationBody,
+      bool enableNotificationOnKill,
+      bool active) async {
     try {
       final ReceivePort port = ReceivePort();
       final success = IsolateNameServer.registerPortWithName(
@@ -80,6 +80,7 @@ class AndroidAlarm {
         'assetAudioPath': assetAudioPath,
         'loopAudio': loopAudio,
         'fadeDuration': fadeDuration,
+        'active': active
       },
     );
 
@@ -191,75 +192,78 @@ class AndroidAlarm {
 
   @pragma('vm:entry-point')
   static Future<void> playAlarm(int id, Map<String, dynamic> data) async {
-    final audioPlayer = AudioPlayer();
-    SendPort send = IsolateNameServer.lookupPortByName("$ringPort-$id")!;
+    if (data['active']) {
+      
+      final audioPlayer = AudioPlayer();
+      SendPort send = IsolateNameServer.lookupPortByName("$ringPort-$id")!;
 
-    send.send('ring');
+      send.send('ring');
 
-    try {
-      final assetAudioPath = data['assetAudioPath'] as String;
+      try {
+        final assetAudioPath = data['assetAudioPath'] as String;
 
-      if (assetAudioPath.startsWith('http')) {
-        await audioPlayer.setUrl(assetAudioPath);
-      } else {
-        await audioPlayer.setAsset(assetAudioPath);
+        if (assetAudioPath.startsWith('http')) {
+          await audioPlayer.setUrl(assetAudioPath);
+        } else {
+          await audioPlayer.setAsset(assetAudioPath);
+        }
+
+        final loopAudio = data['loopAudio'];
+        if (loopAudio) audioPlayer.setLoopMode(LoopMode.all);
+
+        send.send('Alarm fadeDuration: ${data.toString()}');
+
+        final fadeDuration = (data['fadeDuration'] as int).toDouble();
+
+        if (fadeDuration > 0.0) {
+          int counter = 0;
+
+          audioPlayer.setVolume(0.1);
+          audioPlayer.play();
+
+          send.send('Alarm playing with fadeDuration ${fadeDuration}s');
+
+          Timer.periodic(
+            Duration(milliseconds: fadeDuration * 1000 ~/ 10),
+            (timer) {
+              counter++;
+              audioPlayer.setVolume(counter / 10);
+              if (counter >= 10) timer.cancel();
+            },
+          );
+        } else {
+          audioPlayer.play();
+          send.send('Alarm with id $id starts playing.');
+        }
+      } catch (e) {
+        send.send('AudioPlayer with id $id error: ${e.toString()}');
+        await AudioPlayer.clearAssetCache();
+        send.send('Asset cache reset. Please try again.');
       }
 
-      final loopAudio = data['loopAudio'];
-      if (loopAudio) audioPlayer.setLoopMode(LoopMode.all);
+      try {
+        final ReceivePort port = ReceivePort();
+        final success =
+            IsolateNameServer.registerPortWithName(port.sendPort, stopPort);
 
-      send.send('Alarm fadeDuration: ${data.toString()}');
+        if (!success) {
+          IsolateNameServer.removePortNameMapping(stopPort);
+          IsolateNameServer.registerPortWithName(port.sendPort, stopPort);
+        }
 
-      final fadeDuration = (data['fadeDuration'] as int).toDouble();
-
-      if (fadeDuration > 0.0) {
-        int counter = 0;
-
-        audioPlayer.setVolume(0.1);
-        audioPlayer.play();
-
-        send.send('Alarm playing with fadeDuration ${fadeDuration}s');
-
-        Timer.periodic(
-          Duration(milliseconds: fadeDuration * 1000 ~/ 10),
-          (timer) {
-            counter++;
-            audioPlayer.setVolume(counter / 10);
-            if (counter >= 10) timer.cancel();
+        port.listen(
+          (message) async {
+            send.send('(isolate) received: $message');
+            if (message == 'stop') {
+              await audioPlayer.stop();
+              await audioPlayer.dispose();
+              port.close();
+            }
           },
         );
-      } else {
-        audioPlayer.play();
-        send.send('Alarm with id $id starts playing.');
+      } catch (e) {
+        send.send('(isolate) ReceivePort error: $e');
       }
-    } catch (e) {
-      send.send('AudioPlayer with id $id error: ${e.toString()}');
-      await AudioPlayer.clearAssetCache();
-      send.send('Asset cache reset. Please try again.');
-    }
-
-    try {
-      final ReceivePort port = ReceivePort();
-      final success =
-          IsolateNameServer.registerPortWithName(port.sendPort, stopPort);
-
-      if (!success) {
-        IsolateNameServer.removePortNameMapping(stopPort);
-        IsolateNameServer.registerPortWithName(port.sendPort, stopPort);
-      }
-
-      port.listen(
-        (message) async {
-          send.send('(isolate) received: $message');
-          if (message == 'stop') {
-            await audioPlayer.stop();
-            await audioPlayer.dispose();
-            port.close();
-          }
-        },
-      );
-    } catch (e) {
-      send.send('(isolate) ReceivePort error: $e');
     }
   }
 

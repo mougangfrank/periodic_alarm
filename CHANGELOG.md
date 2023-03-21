@@ -1,3 +1,7 @@
+## 0.0.8
+
+* one shot alarm update
+
 ## 0.0.7
 
 * get alarm nullable control added 
