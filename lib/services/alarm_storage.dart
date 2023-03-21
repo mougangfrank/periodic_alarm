@@ -35,6 +35,19 @@ class AlarmStorage {
     return false;
   }
 
+  static Future<bool> alarmActiveChange(int id, bool active) async {
+    var alarmString = prefs.getString("$prefix$id");
+
+    var alarmModel = AlarmModel.fromJson(json.decode(alarmString!));
+
+    alarmModel.setActive = active;
+
+    bool res =
+        await prefs.setString("$prefix$id", json.encode(alarmModel.toJson()));
+
+    return res;
+  }
+
   /// Returns all alarms info from local storage in the case app is terminated
   /// and we need to restore previously scheduled alarms.
   static List<AlarmModel> getSavedAlarms() {
@@ -50,17 +63,17 @@ class AlarmStorage {
     return alarms;
   }
 
-  static Future<bool> deleteAlarm(int alarmId) async{
+  static Future<bool> deleteAlarm(int alarmId) async {
     bool isDeletedAlarm = await prefs.remove("$prefix$alarmId");
 
     return isDeletedAlarm;
   }
 
-  static AlarmModel getAlarm(int alarmId){
+  static AlarmModel getAlarm(int alarmId) {
     final alarm = prefs.getString("$prefix$alarmId");
 
     AlarmModel alarmModel = AlarmModel.fromJson(json.decode(alarm!));
-    
+
     return alarmModel;
   }
 

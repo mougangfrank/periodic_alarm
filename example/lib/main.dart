@@ -25,13 +25,13 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> setAlarm() async {
     AlarmModel alarmModel = AlarmModel(
-      id: 0,
-      dateTime: DateTime.now(),
-      assetAudioPath: 'assets/0.mp3',
-      notificationTitle: 'Alarm is calling',
-      notificationBody: 'Tap to turn off the alarm',
-      monday: true,
-    );
+        id: 0,
+        dateTime: DateTime.now(),
+        assetAudioPath: 'assets/0.mp3',
+        notificationTitle: 'Alarm is calling',
+        notificationBody: 'Tap to turn off the alarm',
+        tuesday: true,
+        active: true);
 
     PeriodicAlarm.setPeriodicAlarm(alarmModel: alarmModel);
   }

@@ -17,7 +17,8 @@ class AndroidAlarm {
   /// Initializes AndroidAlarmManager dependency
   static Future<void> init() => AndroidAlarmManager.initialize();
 
-  static const platform = MethodChannel('com.cagridurmus.periodic_alarm/notifOnAppKill');
+  static const platform =
+      MethodChannel('com.cagridurmus.periodic_alarm/notifOnAppKill');
 
   static bool get hasAnotherAlarm => AlarmStorage.getSavedAlarms().length > 1;
 
@@ -113,7 +114,8 @@ class AndroidAlarm {
       bool thursday,
       bool friday,
       bool saturday,
-      bool sunday) async {
+      bool sunday,
+      bool active) async {
     try {
       final ReceivePort port = ReceivePort();
       final success = IsolateNameServer.registerPortWithName(
@@ -167,7 +169,8 @@ class AndroidAlarm {
         'thursday': thursday,
         'friday': friday,
         'saturday': saturday,
-        'sunday': sunday
+        'sunday': sunday,
+        'active': active
       },
     );
 
@@ -282,7 +285,8 @@ class AndroidAlarm {
         'thursday': data['thursday'],
         'friday': data['friday'],
         'saturday': data['saturday'],
-        'sunday': data['sunday']
+        'sunday': data['sunday'],
+        'active': data['active']
       },
     );
 
@@ -291,7 +295,8 @@ class AndroidAlarm {
         : 'Oluşturulamadı');
 
     // ignore: unnecessary_string_interpolations
-    if (data['${DateFormat("EEEE").format(now).toLowerCase()}']) {
+    if (data['${DateFormat("EEEE").format(now).toLowerCase()}'] &&
+        data['active']) {
       final audioPlayer = AudioPlayer();
       SendPort send = IsolateNameServer.lookupPortByName("$ringPort-$id")!;
 

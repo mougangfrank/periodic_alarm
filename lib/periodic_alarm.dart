@@ -54,7 +54,6 @@ class PeriodicAlarm {
   }
 
   static Future<bool> setPeriodicAlarm({required AlarmModel alarmModel}) async {
-
     await AlarmStorage.saveAlarm(alarmModel);
     //await AlarmNotification.instance.cancel(alarmModel.id);
 
@@ -78,7 +77,8 @@ class PeriodicAlarm {
         alarmModel.thursday,
         alarmModel.friday,
         alarmModel.saturday,
-        alarmModel.sunday);
+        alarmModel.sunday,
+        alarmModel.active);
   }
 
   static Future<bool> stop() async {
@@ -89,16 +89,22 @@ class PeriodicAlarm {
     return await AndroidAlarm.stop();
   }
 
-  static Future<bool> cancelAlarm(int alarmId) async{
+  static Future<bool> cancelAlarm(int alarmId) async {
     bool isCanceledAlarm = await AndroidAlarm.cancelAlarm(alarmId);
 
     return isCanceledAlarm;
   }
 
-  static Future<bool> deleteAlarm(int alarmId) async{
+  static Future<bool> deleteAlarm(int alarmId) async {
     bool isDeletedAlarm = await AlarmStorage.deleteAlarm(alarmId);
 
     return isDeletedAlarm;
+  }
+
+  static Future<bool> saveActiveAlarmStatu(int id, bool active) async {
+    bool res = await AlarmStorage.alarmActiveChange(id, active);
+
+    return res;
   }
 
   static Future<void> setNotificationOnAppKillContent(
@@ -110,4 +116,7 @@ class PeriodicAlarm {
   static bool hasAlarm() => AlarmStorage.hasAlarm();
 
   static List<AlarmModel> getAlarms() => AlarmStorage.getSavedAlarms();
+
+  static AlarmModel getAlarmWithId(int alarmId) =>
+      AlarmStorage.getAlarm(alarmId);
 }
