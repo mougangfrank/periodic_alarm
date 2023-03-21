@@ -121,6 +121,6 @@ class PeriodicAlarm {
 
   static List<AlarmModel> getAlarms() => AlarmStorage.getSavedAlarms();
 
-  static AlarmModel getAlarmWithId(int alarmId) =>
-      AlarmStorage.getAlarm(alarmId);
+  static AlarmModel? getAlarmWithId(int alarmId) =>
+    AlarmStorage.getAlarm(alarmId);
 }

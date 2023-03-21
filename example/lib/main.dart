@@ -50,7 +50,8 @@ class _MyAppState extends State<MyApp> {
               alarm = value;
               setState(() {});
               if (value) {
-                setAlarm();
+                // setAlarm();
+                var model = PeriodicAlarm.getAlarmWithId(1);
               }
             },
           ),

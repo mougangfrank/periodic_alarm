@@ -69,11 +69,15 @@ class AlarmStorage {
     return isDeletedAlarm;
   }
 
-  static AlarmModel getAlarm(int alarmId) {
+  static AlarmModel? getAlarm(int alarmId) {
     final alarm = prefs.getString("$prefix$alarmId");
 
-    AlarmModel alarmModel = AlarmModel.fromJson(json.decode(alarm!));
+    if(alarm == null){
+      return null;
+    }
 
+    AlarmModel? alarmModel = AlarmModel.fromJson(json.decode(alarm!));
+    
     return alarmModel;
   }
 
