@@ -95,6 +95,10 @@ class PeriodicAlarm {
     return isCanceledAlarm;
   }
 
+  static void saveAlarm(AlarmModel alarmModel) {
+    AlarmStorage.saveAlarm(alarmModel);
+  }
+
   static Future<bool> deleteAlarm(int alarmId) async {
     bool isDeletedAlarm = await AlarmStorage.deleteAlarm(alarmId);
 

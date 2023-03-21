@@ -1,3 +1,11 @@
+## 0.0.6
+
+* alarm save function added
+
+## 0.0.5
+
+* active is added
+
 ## 0.0.4
 
 * stop bug fixed
