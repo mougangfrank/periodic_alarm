@@ -76,8 +76,8 @@ class AlarmStorage {
       return null;
     }
 
-    AlarmModel? alarmModel = AlarmModel.fromJson(json.decode(alarm!));
-    
+    AlarmModel? alarmModel = AlarmModel.fromJson(json.decode(alarm));
+
     return alarmModel;
   }
 
