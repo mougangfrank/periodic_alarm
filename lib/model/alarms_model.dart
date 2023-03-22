@@ -48,4 +48,8 @@ class AlarmModel {
   set setId(int id) => this.id = id;
 
   set setActive(bool active) => this.active = active;
+
+  List<bool> get days {
+    return [monday, tuesday, wednesday, thursday, friday, saturday, sunday];
+  }
 }

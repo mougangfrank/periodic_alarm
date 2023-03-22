@@ -1,3 +1,7 @@
+## 0.0.9
+
+* alarmModel updated
+
 ## 0.0.8
 
 * one shot alarm update

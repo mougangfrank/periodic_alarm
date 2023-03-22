@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:periodic_alarm/model/alarms_model.dart';
 import 'package:periodic_alarm/services/alarm_notification.dart';
 import 'package:periodic_alarm/services/alarm_storage.dart';
 
@@ -23,26 +24,18 @@ class AndroidAlarm {
   static bool get hasAnotherAlarm => AlarmStorage.getSavedAlarms().length > 1;
 
   static Future<bool> setOneAlarm(
-      int id,
-      DateTime dateTime,
-      void Function()? onRing,
-      String assetAudioPath,
-      bool loopAudio,
-      double fadeDuration,
-      String? notificationTitle,
-      String? notificationBody,
-      bool enableNotificationOnKill,
-      bool active) async {
+      AlarmModel alarmModel, void Function()? onRing) async {
     try {
       final ReceivePort port = ReceivePort();
       final success = IsolateNameServer.registerPortWithName(
         port.sendPort,
-        "$ringPort-$id",
+        "$ringPort-${alarmModel.id}",
       );
 
       if (!success) {
-        IsolateNameServer.removePortNameMapping("$ringPort-$id");
-        IsolateNameServer.registerPortWithName(port.sendPort, "$ringPort-$id");
+        IsolateNameServer.removePortNameMapping("$ringPort-${alarmModel.id}");
+        IsolateNameServer.registerPortWithName(
+            port.sendPort, "$ringPort-${alarmModel.id}");
       }
       port.listen((message) {
         debugPrint('[Alarm] $message');
@@ -53,7 +46,7 @@ class AndroidAlarm {
       return false;
     }
 
-    if (enableNotificationOnKill && !hasAnotherAlarm) {
+    if (alarmModel.enableNotificationOnKill && !hasAnotherAlarm) {
       try {
         await platform.invokeMethod(
           'setNotificationOnKillService',
@@ -67,66 +60,44 @@ class AndroidAlarm {
         debugPrint('[Alarm] NotificationOnKillService error: $e');
       }
     }
-
+    debugPrint('${alarmModel.dateTime}');
     final res = await AndroidAlarmManager.oneShotAt(
-      dateTime,
-      id,
-      AndroidAlarm.playAlarm,
-      alarmClock: true,
-      allowWhileIdle: true,
-      exact: true,
-      rescheduleOnReboot: true,
-      params: {
-        'assetAudioPath': assetAudioPath,
-        'loopAudio': loopAudio,
-        'fadeDuration': fadeDuration,
-        'active': active
-      },
-    );
+        alarmModel.dateTime, alarmModel.id, AndroidAlarm.playAlarm,
+        alarmClock: true,
+        allowWhileIdle: true,
+        exact: true,
+        rescheduleOnReboot: true,
+        params: alarmModel.toJson());
 
     if (res &&
-        notificationTitle != null &&
-        notificationTitle.isNotEmpty &&
-        notificationBody != null &&
-        notificationBody.isNotEmpty) {
+        alarmModel.notificationTitle != null &&
+        alarmModel.notificationTitle!.isNotEmpty &&
+        alarmModel.notificationBody != null &&
+        alarmModel.notificationBody!.isNotEmpty &&
+        alarmModel.active) {
       await AlarmNotification.instance.scheduleAlarmNotif(
-        id: id,
-        dateTime: dateTime,
-        title: notificationTitle,
-        body: notificationBody,
+        id: alarmModel.id,
+        dateTime: alarmModel.dateTime,
+        title: alarmModel.notificationTitle!,
+        body: alarmModel.notificationBody!,
       );
     }
     return res;
   }
 
   static Future<bool> setPeriodicAlarm(
-      int id,
-      DateTime dateTime,
-      void Function()? onRing,
-      String assetAudioPath,
-      bool loopAudio,
-      double fadeDuration,
-      String? notificationTitle,
-      String? notificationBody,
-      bool enableNotificationOnKill,
-      bool monday,
-      bool tuesday,
-      bool wednesday,
-      bool thursday,
-      bool friday,
-      bool saturday,
-      bool sunday,
-      bool active) async {
+      AlarmModel alarmModel, void Function()? onRing) async {
     try {
       final ReceivePort port = ReceivePort();
       final success = IsolateNameServer.registerPortWithName(
         port.sendPort,
-        "$ringPort-$id",
+        "$ringPort-${alarmModel.id}",
       );
 
       if (!success) {
-        IsolateNameServer.removePortNameMapping("$ringPort-$id");
-        IsolateNameServer.registerPortWithName(port.sendPort, "$ringPort-$id");
+        IsolateNameServer.removePortNameMapping("$ringPort-${alarmModel.id}");
+        IsolateNameServer.registerPortWithName(
+            port.sendPort, "$ringPort-${alarmModel.id}");
       }
       port.listen((message) {
         debugPrint('[Alarm] $message');
@@ -137,7 +108,7 @@ class AndroidAlarm {
       return false;
     }
 
-    if (enableNotificationOnKill && !hasAnotherAlarm) {
+    if (alarmModel.enableNotificationOnKill && !hasAnotherAlarm) {
       try {
         await platform.invokeMethod(
           'setNotificationOnKillService',
@@ -153,38 +124,25 @@ class AndroidAlarm {
     }
 
     final res = await AndroidAlarmManager.oneShotAt(
-      dateTime,
-      id,
-      AndroidAlarm.playAlarm1,
-      alarmClock: true,
-      allowWhileIdle: true,
-      exact: true,
-      rescheduleOnReboot: true,
-      params: {
-        'assetAudioPath': assetAudioPath,
-        'loopAudio': loopAudio,
-        'fadeDuration': fadeDuration,
-        'monday': monday,
-        'tuesday': tuesday,
-        'wednesday': wednesday,
-        'thursday': thursday,
-        'friday': friday,
-        'saturday': saturday,
-        'sunday': sunday,
-        'active': active
-      },
-    );
+        alarmModel.dateTime, alarmModel.id, AndroidAlarm.playAlarm1,
+        alarmClock: true,
+        allowWhileIdle: true,
+        exact: true,
+        rescheduleOnReboot: true,
+        params: alarmModel.toJson());
 
     if (res &&
-        notificationTitle != null &&
-        notificationTitle.isNotEmpty &&
-        notificationBody != null &&
-        notificationBody.isNotEmpty) {
+        alarmModel.notificationTitle != null &&
+        alarmModel.notificationTitle!.isNotEmpty &&
+        alarmModel.notificationBody != null &&
+        alarmModel.notificationBody!.isNotEmpty &&
+        alarmModel.active &&
+        alarmModel.days[DateTime.now().weekday - 1]) {
       await AlarmNotification.instance.scheduleAlarmNotif(
-        id: id,
-        dateTime: dateTime,
-        title: notificationTitle,
-        body: notificationBody,
+        id: alarmModel.id,
+        dateTime: alarmModel.dateTime,
+        title: alarmModel.notificationTitle!,
+        body: alarmModel.notificationBody!,
       );
     }
     return res;
@@ -192,15 +150,15 @@ class AndroidAlarm {
 
   @pragma('vm:entry-point')
   static Future<void> playAlarm(int id, Map<String, dynamic> data) async {
-    if (data['active']) {
-      
+    var alarmModel = AlarmModel.fromJson(data);
+    if (alarmModel.active) {
       final audioPlayer = AudioPlayer();
       SendPort send = IsolateNameServer.lookupPortByName("$ringPort-$id")!;
 
       send.send('ring');
 
       try {
-        final assetAudioPath = data['assetAudioPath'] as String;
+        final assetAudioPath = alarmModel.assetAudioPath;
 
         if (assetAudioPath.startsWith('http')) {
           await audioPlayer.setUrl(assetAudioPath);
@@ -208,12 +166,12 @@ class AndroidAlarm {
           await audioPlayer.setAsset(assetAudioPath);
         }
 
-        final loopAudio = data['loopAudio'];
+        final loopAudio = alarmModel.loopAudio;
         if (loopAudio) audioPlayer.setLoopMode(LoopMode.all);
 
         send.send('Alarm fadeDuration: ${data.toString()}');
 
-        final fadeDuration = (data['fadeDuration'] as int).toDouble();
+        final fadeDuration = (alarmModel.fadeDuration).toDouble();
 
         if (fadeDuration > 0.0) {
           int counter = 0;
@@ -271,43 +229,49 @@ class AndroidAlarm {
   static Future<void> playAlarm1(int id, Map<String, dynamic> data) async {
     var now = DateTime.now();
 
+    var alarmModel = AlarmModel.fromJson(data);
+
     final res = await AndroidAlarmManager.oneShotAt(
-      now.add(const Duration(days: 1)),
-      id,
-      AndroidAlarm.playAlarm1,
-      alarmClock: true,
-      allowWhileIdle: true,
-      exact: true,
-      rescheduleOnReboot: true,
-      params: {
-        'assetAudioPath': data['assetAudioPath'],
-        'loopAudio': data['loopAudio'],
-        'fadeDuration': data['fadeDuration'],
-        'monday': data['monday'],
-        'tuesday': data['tuesday'],
-        'wednesday': data['wednesday'],
-        'thursday': data['thursday'],
-        'friday': data['friday'],
-        'saturday': data['saturday'],
-        'sunday': data['sunday'],
-        'active': data['active']
-      },
-    );
+        alarmModel.dateTime.add(const Duration(days: 1)),
+        id,
+        AndroidAlarm.playAlarm1,
+        alarmClock: true,
+        allowWhileIdle: true,
+        exact: true,
+        rescheduleOnReboot: true,
+        // params: {
+        //   'assetAudioPath': data['assetAudioPath'],
+        //   'loopAudio': data['loopAudio'],
+        //   'fadeDuration': data['fadeDuration'],
+        //   'monday': data['monday'],
+        //   'tuesday': data['tuesday'],
+        //   'wednesday': data['wednesday'],
+        //   'thursday': data['thursday'],
+        //   'friday': data['friday'],
+        //   'saturday': data['saturday'],
+        //   'sunday': data['sunday'],
+        //   'active': data['active']
+        // },
+        params: data);
 
     debugPrint(res
         ? '${now.add(const Duration(days: 1))} ve $id li alarm oluşturuldu.'
         : 'Oluşturulamadı');
 
     // ignore: unnecessary_string_interpolations
-    if (data['${DateFormat("EEEE").format(now).toLowerCase()}'] &&
-        data['active']) {
+    //data['${DateFormat("EEEE").format(now).toLowerCase()}'] && data['active']
+
+    debugPrint('${alarmModel.days[now.weekday - 1]}');
+    debugPrint('${now.weekday - 1}');
+
+    if (alarmModel.days[now.weekday - 1] && alarmModel.active) {
       final audioPlayer = AudioPlayer();
       SendPort send = IsolateNameServer.lookupPortByName("$ringPort-$id")!;
 
       send.send('ring');
 
       try {
-        final assetAudioPath = data['assetAudioPath'] as String;
+        final assetAudioPath = alarmModel.assetAudioPath;
 
         if (assetAudioPath.startsWith('http')) {
           await audioPlayer.setUrl(assetAudioPath);
@@ -315,12 +279,12 @@ class AndroidAlarm {
           await audioPlayer.setAsset(assetAudioPath);
         }
 
-        final loopAudio = data['loopAudio'];
+        final loopAudio = alarmModel.loopAudio;
         if (loopAudio) audioPlayer.setLoopMode(LoopMode.all);
 
-        send.send('Alarm fadeDuration: ${data.toString()}');
+        send.send('Alarm fadeDuration: ${alarmModel.fadeDuration.toString()}');
 
-        final fadeDuration = (data['fadeDuration'] as int).toDouble();
+        final fadeDuration = (alarmModel.fadeDuration).toDouble();
 
         if (fadeDuration > 0.0) {
           int counter = 0;

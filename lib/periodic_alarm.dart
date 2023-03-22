@@ -41,17 +41,7 @@ class PeriodicAlarm {
     }
 
     return await AndroidAlarm.setOneAlarm(
-      alarmModel.id,
-      alarmModel.dateTime,
-      () => ringStream.add(alarmModel),
-      alarmModel.assetAudioPath,
-      alarmModel.loopAudio,
-      alarmModel.fadeDuration,
-      alarmModel.notificationTitle,
-      alarmModel.notificationBody,
-      alarmModel.enableNotificationOnKill,
-      alarmModel.active
-    );
+        alarmModel, () => ringStream.add(alarmModel));
   }
 
   static Future<bool> setPeriodicAlarm({required AlarmModel alarmModel}) async {
@@ -63,23 +53,7 @@ class PeriodicAlarm {
     }
 
     return await AndroidAlarm.setPeriodicAlarm(
-        alarmModel.id,
-        alarmModel.dateTime,
-        () => ringStream.add(alarmModel),
-        alarmModel.assetAudioPath,
-        alarmModel.loopAudio,
-        alarmModel.fadeDuration,
-        alarmModel.notificationTitle,
-        alarmModel.notificationBody,
-        alarmModel.enableNotificationOnKill,
-        alarmModel.monday,
-        alarmModel.tuesday,
-        alarmModel.wednesday,
-        alarmModel.thursday,
-        alarmModel.friday,
-        alarmModel.saturday,
-        alarmModel.sunday,
-        alarmModel.active);
+        alarmModel, () => ringStream.add(alarmModel));
   }
 
   static Future<bool> stop() async {
@@ -123,5 +97,5 @@ class PeriodicAlarm {
   static List<AlarmModel> getAlarms() => AlarmStorage.getSavedAlarms();
 
   static AlarmModel? getAlarmWithId(int alarmId) =>
-    AlarmStorage.getAlarm(alarmId);
+      AlarmStorage.getAlarm(alarmId);
 }
