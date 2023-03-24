@@ -38,7 +38,7 @@ class NotificationOnKillService: Service() {
                 .setContentTitle(title)
                 .setContentText(description)
                 .setAutoCancel(false)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent)
 
             val name = "Alarm notification service on application kill"

@@ -49,18 +49,18 @@ Finally, add your audio asset(s) to your project like usual.
 
 Add to your pubspec.yaml:
 ```Bash
-flutter pub add alarm
+flutter pub add periodic_alarm
 ```
 
-First, you have to initialize the Alarm service in your `main` function:
+First, you have to initialize the periodic_alarm service in your `main` function:
 ```Dart
-await Alarm.init()
+await PeriodicAlarm.init()
 ```
 
 Then, you have to define your alarm settings:
 ```Dart
 final alarmSettings = AlarmSettings(
-  id: 42,
+  id: id,
   dateTime: dateTime,
   assetAudioPath: 'assets/alarm.mp3',
   loopAudio: true,
@@ -68,12 +68,21 @@ final alarmSettings = AlarmSettings(
   notificationTitle: 'This is the title',
   notificationBody: 'This is the body',
   enableNotificationOnKill: true,
+  monday: true,
+  tuesday : true,
+  wednesday : true,
+  thursday : true,
+  friday : true,
+  saturday : true,
+  sunday : true,
+  active : true,
+
 );
 ```
 
 And finally set the alarm:
 ```Dart
-await Alarm.set(settings: alarmSettings)
+await PeriodicAlarm.setOneAlarm(alarmModel: alarmModel)
 ```
 
 Property |   Type     | Description
@@ -86,3 +95,4 @@ fadeDuration |   `double`     | Duration, in seconds, over which to fade the ala
 notificationTitle |   `String`     | The title of the notification triggered when alarm rings if app is on background.
 notificationBody | `String` | The body of the notification.
 enableNotificationOnKill |   `bool`     | Whether to show a notification when application is killed to warn the user that the alarm he set may not ring. Enabled by default.
+

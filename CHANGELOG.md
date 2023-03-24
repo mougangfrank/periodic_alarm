@@ -1,3 +1,6 @@
+## 0.0.10
+
+* fullscreen notifications added
 ## 0.0.9
 
 * alarmModel updated

@@ -5,7 +5,7 @@ part 'alarms_model.g.dart';
 @JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class AlarmModel {
   int id;
-  final DateTime dateTime;
+  DateTime dateTime;
   final String assetAudioPath;
   final bool loopAudio;
   final double fadeDuration;
@@ -48,6 +48,8 @@ class AlarmModel {
   set setId(int id) => this.id = id;
 
   set setActive(bool active) => this.active = active;
+
+  set setDateTime(DateTime dateTime) => this.dateTime = dateTime;
 
   List<bool> get days {
     return [monday, tuesday, wednesday, thursday, friday, saturday, sunday];

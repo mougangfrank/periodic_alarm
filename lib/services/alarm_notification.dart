@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -13,6 +14,9 @@ class AlarmNotification {
 
   final FlutterLocalNotificationsPlugin localNotif =
       FlutterLocalNotificationsPlugin();
+
+  static final StreamController<String?> selectNotificationStream =
+      StreamController<String?>.broadcast();
 
   /// Adds configuration for local notifications and initialize service.
   Future<void> init() async {
@@ -30,8 +34,15 @@ class AlarmNotification {
 
     await localNotif.initialize(
       initializationSettings,
-      onDidReceiveNotificationResponse: (details) {
-        AndroidAlarm.stop();
+      onDidReceiveNotificationResponse:
+          (NotificationResponse notificationResponse) {
+        switch (notificationResponse.notificationResponseType) {
+          case NotificationResponseType.selectedNotification:
+            selectNotificationStream.add(notificationResponse.payload);
+            break;
+          case NotificationResponseType.selectedNotificationAction:
+            break;
+        }
       },
     );
     tz.initializeTimeZones();
@@ -99,6 +110,7 @@ class AlarmNotification {
       importance: Importance.max,
       priority: Priority.max,
       enableLights: true,
+      fullScreenIntent: true,
       playSound: false,
     );
 
