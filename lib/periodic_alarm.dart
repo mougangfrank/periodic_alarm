@@ -52,6 +52,7 @@ class PeriodicAlarm {
       await AlarmNotification.instance.requestPermission();
     }
 
+
     return await AndroidAlarm.setPeriodicAlarm(
         alarmModel, () => ringStream.add(alarmModel));
   }

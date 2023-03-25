@@ -27,7 +27,12 @@ class _MyAppState extends State<MyApp> {
 
   onRingingControl() {
     _subscription = PeriodicAlarm.ringStream.stream.listen(
-      (alarmSettings) => debugPrint('object'),
+      (alarmModel) {
+        if (alarmModel.days.contains(true)) {
+          alarmModel.setDateTime = alarmModel.dateTime.add(Duration(days: 1));
+          PeriodicAlarm.setPeriodicAlarm(alarmModel: alarmModel);
+        }
+      },
     );
 
     setState(() {});
@@ -36,15 +41,15 @@ class _MyAppState extends State<MyApp> {
   Future<void> setAlarm() async {
     AlarmModel alarmModel = AlarmModel(
       id: 0,
-      dateTime: DateTime.now().add(Duration(seconds: 5)),
+      dateTime: DateTime.now().add(Duration(seconds: 10)),
       assetAudioPath: 'assets/0.mp3',
       notificationTitle: 'Alarm is calling',
       notificationBody: 'Tap to turn off the alarm',
       active: true,
     );
-
     PeriodicAlarm.setOneAlarm(alarmModel: alarmModel);
   }
+
 
   @override
   Widget build(BuildContext context) {

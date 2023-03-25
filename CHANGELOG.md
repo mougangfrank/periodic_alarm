@@ -1,3 +1,7 @@
+## 0.0.11
+
+* periodic alarm changed
+
 ## 0.0.10
 
 * fullscreen notifications added

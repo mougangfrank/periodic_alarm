@@ -5,7 +5,6 @@ import 'dart:ui';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:periodic_alarm/model/alarms_model.dart';
 import 'package:periodic_alarm/services/alarm_notification.dart';
@@ -60,7 +59,6 @@ class AndroidAlarm {
         debugPrint('[Alarm] NotificationOnKillService error: $e');
       }
     }
-    debugPrint('${alarmModel.dateTime}');
     final res = await AndroidAlarmManager.oneShotAt(
         alarmModel.dateTime, alarmModel.id, AndroidAlarm.playAlarm,
         alarmClock: true,
@@ -68,6 +66,10 @@ class AndroidAlarm {
         exact: true,
         rescheduleOnReboot: true,
         params: alarmModel.toJson());
+
+    debugPrint(res
+        ? '${alarmModel.dateTime} ve ${alarmModel.id} li tek seferlik alarm oluşturuldu.'
+        : 'Oluşturulamadı');
 
     if (res &&
         alarmModel.notificationTitle != null &&
@@ -131,6 +133,10 @@ class AndroidAlarm {
         rescheduleOnReboot: true,
         params: alarmModel.toJson());
 
+    debugPrint(res
+        ? '${alarmModel.dateTime} ve ${alarmModel.id} li periodic alarm oluşturuldu.'
+        : 'Oluşturulamadı');
+
     if (res &&
         alarmModel.notificationTitle != null &&
         alarmModel.notificationTitle!.isNotEmpty &&
@@ -151,11 +157,11 @@ class AndroidAlarm {
   @pragma('vm:entry-point')
   static Future<void> playAlarm(int id, Map<String, dynamic> data) async {
     var alarmModel = AlarmModel.fromJson(data);
+    SendPort send = IsolateNameServer.lookupPortByName("$ringPort-$id")!;
+
+    send.send('ring');
     if (alarmModel.active) {
       final audioPlayer = AudioPlayer();
-      SendPort send = IsolateNameServer.lookupPortByName("$ringPort-$id")!;
-
-      send.send('ring');
 
       try {
         final assetAudioPath = alarmModel.assetAudioPath;
@@ -230,45 +236,12 @@ class AndroidAlarm {
     var now = DateTime.now();
 
     var alarmModel = AlarmModel.fromJson(data);
+    SendPort send = IsolateNameServer.lookupPortByName("$ringPort-$id")!;
 
-    final res = await AndroidAlarmManager.oneShotAt(
-        alarmModel.dateTime.add(const Duration(days: 1)),
-        id,
-        AndroidAlarm.playAlarm1,
-        alarmClock: true,
-        allowWhileIdle: true,
-        exact: true,
-        rescheduleOnReboot: true,
-        // params: {
-        //   'assetAudioPath': data['assetAudioPath'],
-        //   'loopAudio': data['loopAudio'],
-        //   'fadeDuration': data['fadeDuration'],
-        //   'monday': data['monday'],
-        //   'tuesday': data['tuesday'],
-        //   'wednesday': data['wednesday'],
-        //   'thursday': data['thursday'],
-        //   'friday': data['friday'],
-        //   'saturday': data['saturday'],
-        //   'sunday': data['sunday'],
-        //   'active': data['active']
-        // },
-        params: data);
-
-    debugPrint(res
-        ? '${now.add(const Duration(days: 1))} ve $id li alarm oluşturuldu.'
-        : 'Oluşturulamadı');
-
-    // ignore: unnecessary_string_interpolations
-    //data['${DateFormat("EEEE").format(now).toLowerCase()}'] && data['active']
-
-    debugPrint('${alarmModel.days[now.weekday - 1]}');
-    debugPrint('${now.weekday - 1}');
+    send.send('ring');
 
     if (alarmModel.days[now.weekday - 1] && alarmModel.active) {
       final audioPlayer = AudioPlayer();
-      SendPort send = IsolateNameServer.lookupPortByName("$ringPort-$id")!;
-
-      send.send('ring');
 
       try {
         final assetAudioPath = alarmModel.assetAudioPath;
