@@ -36,7 +36,6 @@ class AlarmNotification {
       initializationSettings,
       onDidReceiveNotificationResponse:
           (NotificationResponse notificationResponse) {
-        PeriodicAlarm.stop();
         switch (notificationResponse.notificationResponseType) {
           case NotificationResponseType.selectedNotification:
             selectNotificationStream.add(notificationResponse.payload);

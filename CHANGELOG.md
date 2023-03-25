@@ -1,3 +1,7 @@
+## 0.0.12
+
+* alarm bug fixed
+
 ## 0.0.11
 
 * periodic alarm changed
