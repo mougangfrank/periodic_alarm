@@ -24,6 +24,7 @@ AlarmModel _$AlarmModelFromJson(Map<String, dynamic> json) => AlarmModel(
       saturday: json['saturday'] as bool? ?? false,
       sunday: json['sunday'] as bool? ?? false,
       active: json['active'] as bool? ?? false,
+      snooze: json['snooze'] as int? ?? 8,
     );
 
 Map<String, dynamic> _$AlarmModelToJson(AlarmModel instance) =>
@@ -43,5 +44,6 @@ Map<String, dynamic> _$AlarmModelToJson(AlarmModel instance) =>
       'friday': instance.friday,
       'saturday': instance.saturday,
       'sunday': instance.sunday,
-      'active': instance.active
+      'active': instance.active,
+      'snooze': instance.snooze,
     };

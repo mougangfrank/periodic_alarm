@@ -6,9 +6,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
-const String alarmStopActionId = 'alarm_stop';
+const String alarmStopActionId = 'stop';
 
-const String alarmSnoozeActionId = 'alarm_snooze';
+const String alarmSnoozeActionId = 'snooze';
 
 class AlarmNotification {
   AlarmNotification._();
@@ -45,6 +45,7 @@ class AlarmNotification {
             break;
           case NotificationResponseType.selectedNotificationAction:
             selectNotificationStream.add(notificationResponse.actionId);
+            selectNotificationStream.add(notificationResponse.id.toString());
             break;
         }
       },
@@ -118,9 +119,9 @@ class AlarmNotification {
       playSound: false,
       visibility: NotificationVisibility.public,
       actions: <AndroidNotificationAction>[
-        AndroidNotificationAction(alarmStopActionId, 'Durdur',
+        AndroidNotificationAction(alarmStopActionId, 'Stop',
             showsUserInterface: true, cancelNotification: true),
-        AndroidNotificationAction(alarmSnoozeActionId, 'Ertele',
+        AndroidNotificationAction(alarmSnoozeActionId, 'Snooze',
             showsUserInterface: true, cancelNotification: true),
       ],
     );

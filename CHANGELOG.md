@@ -1,3 +1,7 @@
+## 0.0.15
+
+* Added snooze time for alarm model
+
 ## 0.0.14
 
 * Added snooze and close buttons to notification

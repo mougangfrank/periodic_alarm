@@ -3,6 +3,7 @@ import 'package:periodic_alarm/model/alarms_model.dart';
 import 'dart:async';
 
 import 'package:periodic_alarm/periodic_alarm.dart';
+import 'package:periodic_alarm/services/alarm_notification.dart';
 import 'package:periodic_alarm_example/view/alarm_screen.dart';
 
 void main() {
@@ -24,16 +25,22 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     onRingingControl();
     PeriodicAlarm.init();
+    configureSelectNotificationSubject();
+  }
+
+  configureSelectNotificationSubject() {
+    AlarmNotification.selectNotificationStream.stream
+        .listen((String? payload) async {
+      if (int.tryParse(payload!.trim()) != null) {
+        var alarmModel = PeriodicAlarm.getAlarmWithId(0);
+        debugPrint('${alarmModel!.dateTime}');
+      }
+    });
   }
 
   onRingingControl() {
     _subscription = PeriodicAlarm.ringStream.stream.listen(
       (alarmModel) async {
-        await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AlarmScreen(alarmModel: alarmModel),
-            ));
         if (alarmModel.days.contains(true)) {
           alarmModel.setDateTime = alarmModel.dateTime.add(Duration(days: 1));
           PeriodicAlarm.setPeriodicAlarm(alarmModel: alarmModel);

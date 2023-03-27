@@ -20,25 +20,26 @@ class AlarmModel {
   final bool saturday;
   final bool sunday;
   bool active;
+  int snooze;
 
-  AlarmModel({
-    required this.id,
-    required this.dateTime,
-    required this.assetAudioPath,
-    this.loopAudio = true,
-    this.fadeDuration = 0.0,
-    this.notificationTitle,
-    this.notificationBody,
-    this.enableNotificationOnKill = true,
-    this.monday = false,
-    this.tuesday = false,
-    this.wednesday = false,
-    this.thursday = false,
-    this.friday = false,
-    this.saturday = false,
-    this.sunday = false,
-    this.active = false,
-  });
+  AlarmModel(
+      {required this.id,
+      required this.dateTime,
+      required this.assetAudioPath,
+      this.loopAudio = true,
+      this.fadeDuration = 0.0,
+      this.notificationTitle,
+      this.notificationBody,
+      this.enableNotificationOnKill = true,
+      this.monday = false,
+      this.tuesday = false,
+      this.wednesday = false,
+      this.thursday = false,
+      this.friday = false,
+      this.saturday = false,
+      this.sunday = false,
+      this.active = false,
+      this.snooze = 8});
 
   Map<String, dynamic> toJson() => _$AlarmModelToJson(this);
 
@@ -50,6 +51,8 @@ class AlarmModel {
   set setActive(bool active) => this.active = active;
 
   set setDateTime(DateTime dateTime) => this.dateTime = dateTime;
+
+  set setSnooze(int snooze) => this.snooze = snooze;
 
   List<bool> get days {
     return [monday, tuesday, wednesday, thursday, friday, saturday, sunday];
