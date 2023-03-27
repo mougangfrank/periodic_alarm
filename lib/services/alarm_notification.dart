@@ -6,6 +6,10 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
+const String alarmStopActionId = 'alarm_stop';
+
+const String alarmSnoozeActionId = 'alarm_snooze';
+
 class AlarmNotification {
   AlarmNotification._();
 
@@ -40,6 +44,7 @@ class AlarmNotification {
             selectNotificationStream.add(notificationResponse.payload);
             break;
           case NotificationResponseType.selectedNotificationAction:
+            selectNotificationStream.add(notificationResponse.actionId);
             break;
         }
       },
@@ -111,6 +116,13 @@ class AlarmNotification {
       enableLights: true,
       fullScreenIntent: true,
       playSound: false,
+      visibility: NotificationVisibility.public,
+      actions: <AndroidNotificationAction>[
+        AndroidNotificationAction(alarmStopActionId, 'Durdur',
+            showsUserInterface: true, cancelNotification: true),
+        AndroidNotificationAction(alarmSnoozeActionId, 'Ertele',
+            showsUserInterface: true, cancelNotification: true),
+      ],
     );
 
     const platformChannelSpecifics = NotificationDetails(

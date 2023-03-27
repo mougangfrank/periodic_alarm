@@ -56,10 +56,10 @@ class PeriodicAlarm {
         alarmModel, () => ringStream.add(alarmModel));
   }
 
-  static Future<bool> stop() async {
+  static Future<bool> stop(int id) async {
     //await AlarmStorage.unsaveAlarm(id);
 
-    //AlarmNotification.instance.cancel(id);
+    AlarmNotification.instance.cancel(id);
 
     return await AndroidAlarm.stop();
   }

@@ -3,6 +3,7 @@ import 'package:periodic_alarm/model/alarms_model.dart';
 import 'dart:async';
 
 import 'package:periodic_alarm/periodic_alarm.dart';
+import 'package:periodic_alarm_example/view/alarm_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,7 +28,12 @@ class _MyAppState extends State<MyApp> {
 
   onRingingControl() {
     _subscription = PeriodicAlarm.ringStream.stream.listen(
-      (alarmModel) {
+      (alarmModel) async {
+        await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AlarmScreen(alarmModel: alarmModel),
+            ));
         if (alarmModel.days.contains(true)) {
           alarmModel.setDateTime = alarmModel.dateTime.add(Duration(days: 1));
           PeriodicAlarm.setPeriodicAlarm(alarmModel: alarmModel);
@@ -49,7 +55,6 @@ class _MyAppState extends State<MyApp> {
     );
     PeriodicAlarm.setOneAlarm(alarmModel: alarmModel);
   }
-
 
   @override
   Widget build(BuildContext context) {

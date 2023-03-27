@@ -1,3 +1,7 @@
+## 0.0.14
+
+* Added snooze and close buttons to notification
+
 ## 0.0.13
 
 * notification canceled added in periodic alarm
