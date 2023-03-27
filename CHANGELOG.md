@@ -1,3 +1,7 @@
+## 0.0.13
+
+* notification canceled added in periodic alarm
+
 ## 0.0.12
 
 * alarm bug fixed

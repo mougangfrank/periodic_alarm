@@ -52,7 +52,6 @@ class PeriodicAlarm {
       await AlarmNotification.instance.requestPermission();
     }
 
-
     return await AndroidAlarm.setPeriodicAlarm(
         alarmModel, () => ringStream.add(alarmModel));
   }
@@ -67,6 +66,7 @@ class PeriodicAlarm {
 
   static Future<bool> cancelAlarm(int alarmId) async {
     bool isCanceledAlarm = await AndroidAlarm.cancelAlarm(alarmId);
+    AlarmNotification.instance.cancel(alarmId);
 
     return isCanceledAlarm;
   }
