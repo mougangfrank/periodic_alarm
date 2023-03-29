@@ -184,6 +184,7 @@ class AndroidAlarm {
 
           audioPlayer.setVolume(0.1);
           audioPlayer.play();
+          AlarmStorage.saveIsAlarmRinging(true);
 
           send.send('Alarm playing with fadeDuration ${fadeDuration}s');
 
@@ -221,6 +222,7 @@ class AndroidAlarm {
             if (message == 'stop') {
               await audioPlayer.stop();
               await audioPlayer.dispose();
+              AlarmStorage.saveIsAlarmRinging(false);
               port.close();
             }
           },
@@ -264,6 +266,7 @@ class AndroidAlarm {
 
           audioPlayer.setVolume(0.1);
           audioPlayer.play();
+          AlarmStorage.saveIsAlarmRinging(true);
 
           send.send('Alarm playing with fadeDuration ${fadeDuration}s');
 
@@ -301,6 +304,7 @@ class AndroidAlarm {
             if (message == 'stop') {
               await audioPlayer.stop();
               await audioPlayer.dispose();
+              AlarmStorage.saveIsAlarmRinging(false);
               port.close();
             }
           },

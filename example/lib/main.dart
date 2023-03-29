@@ -20,6 +20,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   StreamSubscription? _subscription;
   bool alarm = false;
+  int? id;
   @override
   void initState() {
     super.initState();
@@ -31,10 +32,18 @@ class _MyAppState extends State<MyApp> {
   configureSelectNotificationSubject() {
     AlarmNotification.selectNotificationStream.stream
         .listen((String? payload) async {
-      if (int.tryParse(payload!.trim()) != null) {
-        var alarmModel = PeriodicAlarm.getAlarmWithId(0);
-        debugPrint('${alarmModel!.dateTime}');
-      }
+      List<String> payloads = [];
+
+      payloads.add(payload!);
+      payloads.forEach((element) {
+        if (int.tryParse(element) != null) {
+          id = int.tryParse(element);
+          setState(() {});
+        }
+        if (element == 'stop') {
+          PeriodicAlarm.stop(id!);
+        }
+      });
     });
   }
 

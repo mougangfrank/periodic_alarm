@@ -69,10 +69,18 @@ class AlarmStorage {
     return isDeletedAlarm;
   }
 
+  static saveIsAlarmRinging(bool ring) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.setBool('isRinging', ring);
+
+    return ring;
+  }
+
   static AlarmModel? getAlarm(int alarmId) {
     final alarm = prefs.getString("$prefix$alarmId");
 
-    if(alarm == null){
+    if (alarm == null) {
       return null;
     }
 

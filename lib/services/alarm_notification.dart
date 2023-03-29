@@ -44,8 +44,9 @@ class AlarmNotification {
             selectNotificationStream.add(notificationResponse.payload);
             break;
           case NotificationResponseType.selectedNotificationAction:
-            selectNotificationStream.add(notificationResponse.actionId);
             selectNotificationStream.add(notificationResponse.id.toString());
+            selectNotificationStream.add(notificationResponse.actionId);
+
             break;
         }
       },
@@ -117,6 +118,7 @@ class AlarmNotification {
       enableLights: true,
       fullScreenIntent: true,
       playSound: false,
+      category: AndroidNotificationCategory.alarm,
       visibility: NotificationVisibility.public,
       actions: <AndroidNotificationAction>[
         AndroidNotificationAction(alarmStopActionId, 'Stop',
