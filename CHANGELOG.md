@@ -1,3 +1,7 @@
+## 0.0.18
+
+* bug fixed
+
 ## 0.0.17
 
 * alarm stop added with id port

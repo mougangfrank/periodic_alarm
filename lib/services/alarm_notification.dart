@@ -41,7 +41,7 @@ class AlarmNotification {
           (NotificationResponse notificationResponse) {
         switch (notificationResponse.notificationResponseType) {
           case NotificationResponseType.selectedNotification:
-            selectNotificationStream.add(notificationResponse.payload);
+            selectNotificationStream.add(notificationResponse.id.toString());
             break;
           case NotificationResponseType.selectedNotificationAction:
             selectNotificationStream.add(notificationResponse.id.toString());
