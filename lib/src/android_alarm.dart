@@ -13,6 +13,7 @@ import 'package:periodic_alarm/services/alarm_storage.dart';
 class AndroidAlarm {
   static String ringPort = 'alarm-ring';
   static String stopPort = 'alarm-stop';
+  // static String stopPort1 = 'alarm-stop1';
 
   /// Initializes AndroidAlarmManager dependency
   static Future<void> init() => AndroidAlarmManager.initialize();
@@ -161,75 +162,7 @@ class AndroidAlarm {
 
     send.send('ring');
     if (alarmModel.active) {
-      final audioPlayer = AudioPlayer();
-
-      try {
-        final assetAudioPath = alarmModel.assetAudioPath;
-
-        if (assetAudioPath.startsWith('http')) {
-          await audioPlayer.setUrl(assetAudioPath);
-        } else {
-          await audioPlayer.setAsset(assetAudioPath);
-        }
-
-        final loopAudio = alarmModel.loopAudio;
-        if (loopAudio) audioPlayer.setLoopMode(LoopMode.all);
-
-        send.send('Alarm fadeDuration: ${data.toString()}');
-
-        final fadeDuration = (alarmModel.fadeDuration).toDouble();
-
-        if (fadeDuration > 0.0) {
-          int counter = 0;
-
-          audioPlayer.setVolume(0.1);
-          audioPlayer.play();
-          AlarmStorage.saveIsAlarmRinging(true);
-
-          send.send('Alarm playing with fadeDuration ${fadeDuration}s');
-
-          Timer.periodic(
-            Duration(milliseconds: fadeDuration * 1000 ~/ 10),
-            (timer) {
-              counter++;
-              audioPlayer.setVolume(counter / 10);
-              if (counter >= 10) timer.cancel();
-            },
-          );
-        } else {
-          audioPlayer.play();
-          send.send('Alarm with id $id starts playing.');
-        }
-      } catch (e) {
-        send.send('AudioPlayer with id $id error: ${e.toString()}');
-        await AudioPlayer.clearAssetCache();
-        send.send('Asset cache reset. Please try again.');
-      }
-
-      try {
-        final ReceivePort port = ReceivePort();
-        final success =
-            IsolateNameServer.registerPortWithName(port.sendPort, stopPort);
-
-        if (!success) {
-          IsolateNameServer.removePortNameMapping(stopPort);
-          IsolateNameServer.registerPortWithName(port.sendPort, stopPort);
-        }
-
-        port.listen(
-          (message) async {
-            send.send('(isolate) received: $message');
-            if (message == 'stop') {
-              await audioPlayer.stop();
-              await audioPlayer.dispose();
-              AlarmStorage.saveIsAlarmRinging(false);
-              port.close();
-            }
-          },
-        );
-      } catch (e) {
-        send.send('(isolate) ReceivePort error: $e');
-      }
+      playMusic(send, alarmModel, id);
     }
   }
 
@@ -243,75 +176,78 @@ class AndroidAlarm {
     send.send('ring');
 
     if (alarmModel.days[now.weekday - 1] && alarmModel.active) {
-      final audioPlayer = AudioPlayer();
+      playMusic(send, alarmModel, id);
+    }
+  }
 
-      try {
-        final assetAudioPath = alarmModel.assetAudioPath;
+  static playMusic(SendPort send, AlarmModel alarmModel, int id) async {
+    final audioPlayer = AudioPlayer();
 
-        if (assetAudioPath.startsWith('http')) {
-          await audioPlayer.setUrl(assetAudioPath);
-        } else {
-          await audioPlayer.setAsset(assetAudioPath);
-        }
+    try {
+      final assetAudioPath = alarmModel.assetAudioPath;
 
-        final loopAudio = alarmModel.loopAudio;
-        if (loopAudio) audioPlayer.setLoopMode(LoopMode.all);
-
-        send.send('Alarm fadeDuration: ${alarmModel.fadeDuration.toString()}');
-
-        final fadeDuration = (alarmModel.fadeDuration).toDouble();
-
-        if (fadeDuration > 0.0) {
-          int counter = 0;
-
-          audioPlayer.setVolume(0.1);
-          audioPlayer.play();
-          AlarmStorage.saveIsAlarmRinging(true);
-
-          send.send('Alarm playing with fadeDuration ${fadeDuration}s');
-
-          Timer.periodic(
-            Duration(milliseconds: fadeDuration * 1000 ~/ 10),
-            (timer) {
-              counter++;
-              audioPlayer.setVolume(counter / 10);
-              if (counter >= 10) timer.cancel();
-            },
-          );
-        } else {
-          audioPlayer.play();
-          send.send('Alarm with id $id starts playing.');
-        }
-      } catch (e) {
-        send.send('AudioPlayer with id $id error: ${e.toString()}');
-        await AudioPlayer.clearAssetCache();
-        send.send('Asset cache reset. Please try again.');
+      if (assetAudioPath.startsWith('http')) {
+        await audioPlayer.setUrl(assetAudioPath);
+      } else {
+        await audioPlayer.setAsset(assetAudioPath);
       }
 
-      try {
-        final ReceivePort port = ReceivePort();
-        final success =
-            IsolateNameServer.registerPortWithName(port.sendPort, stopPort);
+      final loopAudio = alarmModel.loopAudio;
+      if (loopAudio) audioPlayer.setLoopMode(LoopMode.all);
 
-        if (!success) {
-          IsolateNameServer.removePortNameMapping(stopPort);
-          IsolateNameServer.registerPortWithName(port.sendPort, stopPort);
-        }
+      send.send('Alarm fadeDuration: ${alarmModel.fadeDuration.toString()}');
 
-        port.listen(
-          (message) async {
-            send.send('(isolate) received: $message');
-            if (message == 'stop') {
-              await audioPlayer.stop();
-              await audioPlayer.dispose();
-              AlarmStorage.saveIsAlarmRinging(false);
-              port.close();
-            }
+      final fadeDuration = (alarmModel.fadeDuration).toDouble();
+
+      if (fadeDuration > 0.0) {
+        int counter = 0;
+
+        audioPlayer.setVolume(0.1);
+        audioPlayer.play();
+
+        send.send('Alarm playing with fadeDuration ${fadeDuration}s');
+
+        Timer.periodic(
+          Duration(milliseconds: fadeDuration * 1000 ~/ 10),
+          (timer) {
+            counter++;
+            audioPlayer.setVolume(counter / 10);
+            if (counter >= 10) timer.cancel();
           },
         );
-      } catch (e) {
-        send.send('(isolate) ReceivePort error: $e');
+      } else {
+        audioPlayer.play();
+        send.send('Alarm with id $id starts playing.');
       }
+    } catch (e) {
+      send.send('AudioPlayer with id $id error: ${e.toString()}');
+      await AudioPlayer.clearAssetCache();
+      send.send('Asset cache reset. Please try again.');
+    }
+
+    try {
+      final ReceivePort port = ReceivePort();
+      final success = IsolateNameServer.registerPortWithName(
+          port.sendPort, "$stopPort-${alarmModel.id}");
+
+      if (!success) {
+        IsolateNameServer.removePortNameMapping("$stopPort-${alarmModel.id}");
+        IsolateNameServer.registerPortWithName(
+            port.sendPort, "$stopPort-${alarmModel.id}");
+      }
+
+      port.listen(
+        (message) async {
+          send.send('(isolate) received: $message');
+          if (message == 'stop') {
+            await audioPlayer.stop();
+            await audioPlayer.dispose();
+            port.close();
+          }
+        },
+      );
+    } catch (e) {
+      send.send('(isolate) ReceivePort error: $e');
     }
   }
 
@@ -322,10 +258,11 @@ class AndroidAlarm {
   }
 
   @pragma('vm:entry-point')
-  static Future<bool> stop() async {
+  static Future<bool> stop(int id) async {
     bool res;
     try {
-      final SendPort send = IsolateNameServer.lookupPortByName(stopPort)!;
+      final SendPort send =
+          IsolateNameServer.lookupPortByName("$stopPort-$id")!;
       send.send('stop');
       res = true;
     } catch (e) {

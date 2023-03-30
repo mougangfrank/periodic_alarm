@@ -15,6 +15,8 @@ class PeriodicAlarm {
 
   static final ringStream = StreamController<AlarmModel>();
 
+  // static final stopStream = StreamController<AlarmModel>();
+
   static Future<void> init() async {
     await Future.wait([
       if (android) AndroidAlarm.init(),
@@ -41,7 +43,7 @@ class PeriodicAlarm {
     }
 
     return await AndroidAlarm.setOneAlarm(
-        alarmModel, () => ringStream.add(alarmModel));
+      alarmModel, () => ringStream.add(alarmModel));
   }
 
   static Future<bool> setPeriodicAlarm({required AlarmModel alarmModel}) async {
@@ -61,7 +63,7 @@ class PeriodicAlarm {
 
     AlarmNotification.instance.cancel(id);
 
-    return await AndroidAlarm.stop();
+    return await AndroidAlarm.stop(id);
   }
 
   static Future<bool> cancelAlarm(int alarmId) async {
