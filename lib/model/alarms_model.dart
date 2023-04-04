@@ -21,6 +21,10 @@ class AlarmModel {
   final bool sunday;
   bool active;
   int snooze;
+  int musicTime;
+  double incMusicTime;
+  double musicVolume;
+  double incMusicVolume;
 
   AlarmModel(
       {required this.id,
@@ -39,7 +43,11 @@ class AlarmModel {
       this.saturday = false,
       this.sunday = false,
       this.active = false,
-      this.snooze = 8});
+      this.snooze = 8,
+      this.musicTime = 10,
+      this.incMusicTime = 5.0,
+      this.musicVolume = 1.0,
+      this.incMusicVolume = 0.5});
 
   Map<String, dynamic> toJson() => _$AlarmModelToJson(this);
 

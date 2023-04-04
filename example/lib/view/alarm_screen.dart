@@ -24,7 +24,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
 
   @override
   void dispose() {
-    _subscription2!.cancel();
+    // _subscription2!.cancel();
     super.dispose();
   }
 
@@ -44,23 +44,27 @@ class _AlarmScreenState extends State<AlarmScreen> {
     final alarmModel = ModalRoute.of(context)!.settings.arguments as AlarmModel;
     return Scaffold(
       body: Container(
-        child: Row(
-          children: [
-            ElevatedButton(
-                onPressed: () {
-                  PeriodicAlarm.stop(alarmModel.id);
-                },
-                child: Text('OFF')),
-            ElevatedButton(
-                onPressed: () {
-                  PeriodicAlarm.stop(alarmModel.id);
-                  PeriodicAlarm.cancelAlarm(alarmModel.id);
-                  alarmModel.setDateTime =
-                      alarmModel.dateTime.add(Duration(minutes: 8));
-                  PeriodicAlarm.setOneAlarm(alarmModel: alarmModel);
-                },
-                child: Text('Snooze'))
-          ],
+        child: Center(
+          child: Row(
+            children: [
+              ElevatedButton(
+                  onPressed: () {
+                    PeriodicAlarm.stop(alarmModel.id);
+                    Navigator.pop(context);
+                  },
+                  child: Text('OFF')),
+              ElevatedButton(
+                  onPressed: () {
+                    PeriodicAlarm.stop(alarmModel.id);
+                    PeriodicAlarm.cancelAlarm(alarmModel.id);
+                    alarmModel.setDateTime =
+                        alarmModel.dateTime.add(Duration(minutes: 8));
+                    PeriodicAlarm.setOneAlarm(alarmModel: alarmModel);
+                    Navigator.pop(context);
+                  },
+                  child: Text('Snooze'))
+            ],
+          ),
         ),
       ),
     );

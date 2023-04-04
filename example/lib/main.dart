@@ -71,13 +71,16 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> setAlarm(int id, int time) async {
     AlarmModel alarmModel = AlarmModel(
-      id: id,
-      dateTime: DateTime.now().add(Duration(seconds: time)),
-      assetAudioPath: 'assets/0.mp3',
-      notificationTitle: 'Alarm is calling',
-      notificationBody: 'Tap to turn off the alarm',
-      active: true,
-    );
+        id: id,
+        dateTime: DateTime.now().add(Duration(seconds: time)),
+        assetAudioPath: 'assets/0.mp3',
+        notificationTitle: 'Alarm is calling',
+        notificationBody: 'Tap to turn off the alarm',
+        active: true,
+        musicTime: 1,
+        incMusicTime: 0.15,
+        musicVolume: 0.4,
+        incMusicVolume: 0.23);
     PeriodicAlarm.setOneAlarm(alarmModel: alarmModel);
   }
 
@@ -112,7 +115,7 @@ class _HomePageState extends State<HomePage> {
             alarm = value;
             setState(() {});
             if (value) {
-              setAlarm(0, 10);
+              setAlarm(0, 20);
               // setAlarm(1, 20);
             }
           },

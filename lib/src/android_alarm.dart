@@ -13,6 +13,8 @@ import 'package:periodic_alarm/services/alarm_storage.dart';
 class AndroidAlarm {
   static String ringPort = 'alarm-ring';
   static String stopPort = 'alarm-stop';
+  static int timerDurationSeconds = 5;
+  static int secondsToMinutes = 60;
   // static String stopPort1 = 'alarm-stop1';
 
   /// Initializes AndroidAlarmManager dependency
@@ -181,6 +183,8 @@ class AndroidAlarm {
   }
 
   static playMusic(SendPort send, AlarmModel alarmModel, int id) async {
+    // ignore: no_leading_underscores_for_local_identifiers
+    Timer? _timer;
     final audioPlayer = AudioPlayer();
 
     try {
@@ -197,22 +201,34 @@ class AndroidAlarm {
 
       send.send('Alarm fadeDuration: ${alarmModel.fadeDuration.toString()}');
 
-      final fadeDuration = (alarmModel.fadeDuration).toDouble();
+      final musicTime = (alarmModel.musicTime).toDouble();
 
-      if (fadeDuration > 0.0) {
-        int counter = 0;
+      if (musicTime > 0) {
+        double volume = 0.0;
 
-        audioPlayer.setVolume(0.1);
+        audioPlayer.setVolume(0.0);
         audioPlayer.play();
 
-        send.send('Alarm playing with fadeDuration ${fadeDuration}s');
+        send.send('Alarm playing with fadeDuration ${musicTime}s');
 
-        Timer.periodic(
-          Duration(milliseconds: fadeDuration * 1000 ~/ 10),
+        _timer = Timer.periodic(
+          Duration(seconds: timerDurationSeconds),
           (timer) {
-            counter++;
-            audioPlayer.setVolume(counter / 10);
-            if (counter >= 10) timer.cancel();
+            // counter++;
+            if (audioPlayer.volume < alarmModel.incMusicVolume) {
+              volume = audioPlayer.volume +
+                  (alarmModel.incMusicVolume * timerDurationSeconds) /
+                      (alarmModel.incMusicTime * secondsToMinutes);
+            } else {
+              volume = audioPlayer.volume +
+                  ((alarmModel.musicVolume - alarmModel.incMusicVolume) *
+                          timerDurationSeconds) /
+                      ((alarmModel.musicTime - alarmModel.incMusicTime) *
+                          secondsToMinutes);
+            }
+            audioPlayer.setVolume(volume);
+            debugPrint('music volume: ${audioPlayer.volume}');
+            if (audioPlayer.volume >= alarmModel.musicVolume) _timer!.cancel();
           },
         );
       } else {
@@ -240,6 +256,7 @@ class AndroidAlarm {
         (message) async {
           send.send('(isolate) received: $message');
           if (message == 'stop') {
+            _timer!.cancel();
             await audioPlayer.stop();
             await audioPlayer.dispose();
             port.close();

@@ -1,6 +1,10 @@
+## 0.0.20
+
+* Added algorithm that provides alarm volume increase at a certain sound and time slope
+
 ## 0.0.19
 
-* update
+* alarm notification bug fixed
 
 ## 0.0.18
 

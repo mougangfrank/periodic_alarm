@@ -25,6 +25,10 @@ AlarmModel _$AlarmModelFromJson(Map<String, dynamic> json) => AlarmModel(
       sunday: json['sunday'] as bool? ?? false,
       active: json['active'] as bool? ?? false,
       snooze: json['snooze'] as int? ?? 8,
+      musicTime: json['music_time'] as int? ?? 10,
+      incMusicTime: (json['inc_music_time'] as num?)?.toDouble() ?? 5.0,
+      musicVolume: (json['music_volume'] as num?)?.toDouble() ?? 1.0,
+      incMusicVolume: (json['inc_music_volume'] as num?)?.toDouble() ?? 0.5,
     );
 
 Map<String, dynamic> _$AlarmModelToJson(AlarmModel instance) =>
@@ -46,4 +50,8 @@ Map<String, dynamic> _$AlarmModelToJson(AlarmModel instance) =>
       'sunday': instance.sunday,
       'active': instance.active,
       'snooze': instance.snooze,
+      'music_time': instance.musicTime,
+      'inc_music_time': instance.incMusicTime,
+      'music_volume': instance.musicVolume,
+      'inc_music_volume': instance.incMusicVolume,
     };
