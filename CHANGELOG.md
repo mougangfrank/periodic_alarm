@@ -1,3 +1,7 @@
+## 0.0.25
+
+* bug fixed
+
 ## 0.0.24
 
 * alarm screen fixed

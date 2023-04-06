@@ -46,13 +46,13 @@ class _AlarmScreenState extends State<AlarmScreen> {
             children: [
               ElevatedButton(
                   onPressed: () {
-                    PeriodicAlarm.stop(alarmModel!.id, 3);
+                    PeriodicAlarm.stop(alarmModel!.id);
                     Navigator.pop(context);
                   },
                   child: Text('OFF')),
               ElevatedButton(
                   onPressed: () {
-                    PeriodicAlarm.stop(alarmModel!.id, 3);
+                    PeriodicAlarm.stop(alarmModel!.id);
                     PeriodicAlarm.cancelAlarm(alarmModel!.id);
                     alarmModel!.setDateTime =
                         alarmModel!.dateTime.add(Duration(minutes: 8));

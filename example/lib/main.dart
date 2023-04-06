@@ -71,7 +71,7 @@ class _HomePageState extends State<HomePage> {
           alarmModel = PeriodicAlarm.getAlarmWithId(id!);
           setState(() {});
         } else if (element == 'stop') {
-          PeriodicAlarm.stop(id!, 3);
+          PeriodicAlarm.stop(id!);
         }
       });
     });
@@ -126,7 +126,7 @@ class _HomePageState extends State<HomePage> {
             setState(() {});
             if (value) {
               setAlarm(0, 5);
-              setAlarm(1, 35);
+              setAlarm(1, 15);
               // setAlarm(1, 20);
             }
           },

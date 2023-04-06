@@ -178,7 +178,6 @@ class AndroidAlarm {
     SendPort send = IsolateNameServer.lookupPortByName("$ringPort-$id")!;
 
     send.send('ring');
-    
 
     if (alarmModel.days[now.weekday - 1] && alarmModel.active) {
       await AlarmStorage.saveIsAlarmRinging(id);
@@ -191,7 +190,6 @@ class AndroidAlarm {
     Timer? _timer;
     try {
       final assetAudioPath = alarmModel.assetAudioPath;
-      
 
       if (assetAudioPath.startsWith('http')) {
         await audioPlayer.setUrl(assetAudioPath);
@@ -281,11 +279,8 @@ class AndroidAlarm {
   static Future<bool> stop(int id) async {
     bool res;
     try {
-      for (int i = 0; i <= id; i++) {
-        final SendPort send =
-            IsolateNameServer.lookupPortByName("$stopPort-$i")!;
-        send.send('stop');
-      }
+      final SendPort send = IsolateNameServer.lookupPortByName("$stopPort-$id")!;
+      send.send('stop');
       res = true;
     } catch (e) {
       debugPrint('[Alarm] (main) SendPort error: $e');
