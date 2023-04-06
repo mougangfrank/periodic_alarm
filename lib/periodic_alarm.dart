@@ -25,6 +25,12 @@ class PeriodicAlarm {
     ]);
   }
 
+  static Future<void> dispose() async {
+    await Future.wait([
+      AndroidAlarm.audioPlayer.dispose(),
+    ]);
+  }
+
   static Future<bool> setOneAlarm({required AlarmModel alarmModel}) async {
     // for (final alarm in PeriodicAlarm.getAlarms()) {
     //   if (alarm.id == alarmModel.id ||
@@ -43,7 +49,7 @@ class PeriodicAlarm {
     }
 
     return await AndroidAlarm.setOneAlarm(
-      alarmModel, () => ringStream.add(alarmModel));
+        alarmModel, () => ringStream.add(alarmModel));
   }
 
   static Future<bool> setPeriodicAlarm({required AlarmModel alarmModel}) async {
@@ -58,12 +64,12 @@ class PeriodicAlarm {
         alarmModel, () => ringStream.add(alarmModel));
   }
 
-  static Future<bool> stop(int id) async {
+  static Future<bool> stop(int notificationId, int alarmStopId) async {
     //await AlarmStorage.unsaveAlarm(id);
 
-    AlarmNotification.instance.cancel(id);
+    AlarmNotification.instance.cancel(notificationId);
 
-    return await AndroidAlarm.stop(id);
+    return await AndroidAlarm.stop(alarmStopId);
   }
 
   static Future<bool> cancelAlarm(int alarmId) async {

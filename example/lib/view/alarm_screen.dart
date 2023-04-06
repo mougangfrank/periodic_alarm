@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:periodic_alarm/model/alarms_model.dart';
 import 'package:periodic_alarm/periodic_alarm.dart';
 
@@ -49,13 +47,13 @@ class _AlarmScreenState extends State<AlarmScreen> {
             children: [
               ElevatedButton(
                   onPressed: () {
-                    PeriodicAlarm.stop(alarmModel.id);
+                    PeriodicAlarm.stop(alarmModel.id, 3);
                     Navigator.pop(context);
                   },
                   child: Text('OFF')),
               ElevatedButton(
                   onPressed: () {
-                    PeriodicAlarm.stop(alarmModel.id);
+                    PeriodicAlarm.stop(alarmModel.id, 3);
                     PeriodicAlarm.cancelAlarm(alarmModel.id);
                     alarmModel.setDateTime =
                         alarmModel.dateTime.add(Duration(minutes: 8));

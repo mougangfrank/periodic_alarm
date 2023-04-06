@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:periodic_alarm/periodic_alarm.dart';
 import 'package:periodic_alarm/services/alarm_notification.dart';
 import 'package:periodic_alarm_example/view/alarm_screen.dart';
+import 'package:periodic_alarm/src/android_alarm.dart';
 
 void main() {
   runApp(const MyApp());
@@ -41,6 +42,7 @@ class _HomePageState extends State<HomePage> {
   StreamSubscription? _subscription;
   StreamSubscription? _subscription2;
   bool alarm = false;
+  bool alarm1 = false;
   int? id;
 
   @override
@@ -49,6 +51,12 @@ class _HomePageState extends State<HomePage> {
     onRingingControl();
     PeriodicAlarm.init();
     configureSelectNotificationSubject();
+  }
+
+  @override
+  void dispose() {
+    AndroidAlarm.audioPlayer.dispose();
+    super.dispose();
   }
 
   configureSelectNotificationSubject() {
@@ -63,7 +71,7 @@ class _HomePageState extends State<HomePage> {
           alarmModel = PeriodicAlarm.getAlarmWithId(id!);
           setState(() {});
         } else if (element == 'stop') {
-          PeriodicAlarm.stop(id!);
+          PeriodicAlarm.stop(id!, 3);
         }
       });
     });
@@ -84,7 +92,7 @@ class _HomePageState extends State<HomePage> {
     PeriodicAlarm.setOneAlarm(alarmModel: alarmModel);
   }
 
-  openAlarmScreen(AlarmModel alarmModel) {
+  openAlarmScreen(AlarmModel alarmModel) async {
     Navigator.pushNamed(context, '/alarmscreen', arguments: alarmModel);
   }
 
@@ -115,7 +123,8 @@ class _HomePageState extends State<HomePage> {
             alarm = value;
             setState(() {});
             if (value) {
-              setAlarm(0, 20);
+              setAlarm(0, 5);
+              setAlarm(1, 35);
               // setAlarm(1, 20);
             }
           },

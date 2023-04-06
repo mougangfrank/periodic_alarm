@@ -19,6 +19,7 @@ class AndroidAlarm {
 
   /// Initializes AndroidAlarmManager dependency
   static Future<void> init() => AndroidAlarmManager.initialize();
+  static final audioPlayer = AudioPlayer();
 
   static const platform =
       MethodChannel('com.cagridurmus.periodic_alarm/notifOnAppKill');
@@ -176,8 +177,10 @@ class AndroidAlarm {
     SendPort send = IsolateNameServer.lookupPortByName("$ringPort-$id")!;
 
     send.send('ring');
+    
 
     if (alarmModel.days[now.weekday - 1] && alarmModel.active) {
+      await AlarmStorage.saveIsAlarmRinging(true);
       playMusic(send, alarmModel, id);
     }
   }
@@ -185,10 +188,9 @@ class AndroidAlarm {
   static playMusic(SendPort send, AlarmModel alarmModel, int id) async {
     // ignore: no_leading_underscores_for_local_identifiers
     Timer? _timer;
-    final audioPlayer = AudioPlayer();
-
     try {
       final assetAudioPath = alarmModel.assetAudioPath;
+      
 
       if (assetAudioPath.startsWith('http')) {
         await audioPlayer.setUrl(assetAudioPath);
@@ -258,7 +260,7 @@ class AndroidAlarm {
           if (message == 'stop') {
             _timer!.cancel();
             await audioPlayer.stop();
-            await audioPlayer.dispose();
+            // await audioPlayer.dispose();
             port.close();
           }
         },
@@ -278,9 +280,12 @@ class AndroidAlarm {
   static Future<bool> stop(int id) async {
     bool res;
     try {
-      final SendPort send =
-          IsolateNameServer.lookupPortByName("$stopPort-$id")!;
-      send.send('stop');
+      for (int i = 0; i <= id; i++) {
+        final SendPort send =
+            IsolateNameServer.lookupPortByName("$stopPort-$i")!;
+        send.send('stop');
+      }
+      await AlarmStorage.removeAlarmRinging();
       res = true;
     } catch (e) {
       debugPrint('[Alarm] (main) SendPort error: $e');

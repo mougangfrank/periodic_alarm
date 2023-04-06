@@ -1,3 +1,15 @@
+## 0.0.23
+
+* At the same time, the alarm sounding problem has been solved(2)
+
+## 0.0.22
+
+* At the same time, alarm ring bug fixed
+
+## 0.0.21
+
+* At the same time, the alarm sounding problem has been solved.
+
 ## 0.0.20
 
 * Added algorithm that provides alarm volume increase at a certain sound and time slope
