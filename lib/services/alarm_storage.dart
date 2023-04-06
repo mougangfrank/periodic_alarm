@@ -63,6 +63,22 @@ class AlarmStorage {
     return alarms;
   }
 
+  static Future<int> getSavedAlarmsNumber() async {
+    final alarms = <AlarmModel>[];
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.reload();
+
+    final keys = prefs.getKeys();
+
+    for (final key in keys) {
+      if (key.startsWith(prefix)) {
+        final res = prefs.getString(key);
+        alarms.add(AlarmModel.fromJson(json.decode(res!)));
+      }
+    }
+    return alarms.length;
+  }
+
   static Future<bool> deleteAlarm(int alarmId) async {
     bool isDeletedAlarm = await prefs.remove("$prefix$alarmId");
 
@@ -71,7 +87,7 @@ class AlarmStorage {
 
   static Future<void> saveIsAlarmRinging(int id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.reload();
+    await prefs.reload();
     prefs.setInt('isRinging', id);
   }
 

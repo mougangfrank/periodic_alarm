@@ -279,8 +279,12 @@ class AndroidAlarm {
   static Future<bool> stop(int id) async {
     bool res;
     try {
-      final SendPort send = IsolateNameServer.lookupPortByName("$stopPort-$id")!;
-      send.send('stop');
+      for (int i = 0; i < await AlarmStorage.getSavedAlarmsNumber(); i++) {
+        final SendPort send =
+            IsolateNameServer.lookupPortByName("$stopPort-$id")!;
+        send.send('stop');
+      }
+      await AlarmStorage.removeAlarmRinging(); 
       res = true;
     } catch (e) {
       debugPrint('[Alarm] (main) SendPort error: $e');

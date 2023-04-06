@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:periodic_alarm/periodic_alarm.dart';
 import 'package:periodic_alarm/services/alarm_notification.dart';
+import 'package:periodic_alarm/services/alarm_storage.dart';
 import 'package:periodic_alarm_example/view/alarm_screen.dart';
 import 'package:periodic_alarm/src/android_alarm.dart';
 
@@ -93,8 +94,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   openAlarmScreen() async {
-    Future.delayed(Duration(seconds: 1), () {
-      Navigator.pushNamed(context, '/alarmscreen');
+    Future.delayed(Duration(seconds: 1), () async {
+      if (await AlarmStorage.getAlarmRinging() != null) {
+        Navigator.pushNamed(context, '/alarmscreen');
+      }
     });
   }
 

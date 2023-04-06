@@ -55,7 +55,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
                     PeriodicAlarm.stop(alarmModel!.id);
                     PeriodicAlarm.cancelAlarm(alarmModel!.id);
                     alarmModel!.setDateTime =
-                        alarmModel!.dateTime.add(Duration(minutes: 8));
+                        alarmModel!.dateTime.add(Duration(seconds: 10));
                     PeriodicAlarm.setOneAlarm(alarmModel: alarmModel!);
                     Navigator.pop(context);
                   },
