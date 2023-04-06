@@ -281,7 +281,7 @@ class AndroidAlarm {
     try {
       for (int i = 0; i < await AlarmStorage.getSavedAlarmsNumber(); i++) {
         final SendPort send =
-            IsolateNameServer.lookupPortByName("$stopPort-$id")!;
+            IsolateNameServer.lookupPortByName("$stopPort-$i")!;
         send.send('stop');
       }
       await AlarmStorage.removeAlarmRinging(); 
