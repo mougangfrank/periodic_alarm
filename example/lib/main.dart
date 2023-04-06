@@ -92,14 +92,16 @@ class _HomePageState extends State<HomePage> {
     PeriodicAlarm.setOneAlarm(alarmModel: alarmModel);
   }
 
-  openAlarmScreen(AlarmModel alarmModel) async {
-    Navigator.pushNamed(context, '/alarmscreen', arguments: alarmModel);
+  openAlarmScreen() async {
+    Future.delayed(Duration(seconds: 1), () {
+      Navigator.pushNamed(context, '/alarmscreen');
+    });
   }
 
   onRingingControl() {
     _subscription = PeriodicAlarm.ringStream.stream.listen(
       (alarmModel) async {
-        openAlarmScreen(alarmModel);
+        openAlarmScreen();
         if (alarmModel.days.contains(true)) {
           alarmModel.setDateTime = alarmModel.dateTime.add(Duration(days: 1));
           PeriodicAlarm.setPeriodicAlarm(alarmModel: alarmModel);

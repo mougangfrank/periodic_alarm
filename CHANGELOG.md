@@ -1,3 +1,7 @@
+## 0.0.24
+
+* alarm screen fixed
+
 ## 0.0.23
 
 * At the same time, the alarm sounding problem has been solved(2)

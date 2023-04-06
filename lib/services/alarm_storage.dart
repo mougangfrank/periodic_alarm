@@ -69,23 +69,24 @@ class AlarmStorage {
     return isDeletedAlarm;
   }
 
-  static Future<void> saveIsAlarmRinging(bool ring) async {
+  static Future<void> saveIsAlarmRinging(int id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.reload();
-    prefs.setBool('isRinging', ring);
+    prefs.setInt('isRinging', id);
   }
 
   static Future<bool> removeAlarmRinging() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.reload();
+    await prefs.reload();
     bool isRemove = await prefs.remove('isRinging');
     return isRemove;
   }
 
-  static Future<bool?> getAlarmRinging() async {
+  static Future<int?> getAlarmRinging() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.reload();
-    return prefs.getBool('isRinging');
+
+    await prefs.reload();
+    return prefs.getInt('isRinging');
   }
 
   static AlarmModel? getAlarm(int alarmId) {

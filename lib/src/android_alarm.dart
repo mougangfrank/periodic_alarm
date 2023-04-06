@@ -165,6 +165,7 @@ class AndroidAlarm {
 
     send.send('ring');
     if (alarmModel.active) {
+      await AlarmStorage.saveIsAlarmRinging(id);
       playMusic(send, alarmModel, id);
     }
   }
@@ -180,7 +181,7 @@ class AndroidAlarm {
     
 
     if (alarmModel.days[now.weekday - 1] && alarmModel.active) {
-      await AlarmStorage.saveIsAlarmRinging(true);
+      await AlarmStorage.saveIsAlarmRinging(id);
       playMusic(send, alarmModel, id);
     }
   }
@@ -285,7 +286,6 @@ class AndroidAlarm {
             IsolateNameServer.lookupPortByName("$stopPort-$i")!;
         send.send('stop');
       }
-      await AlarmStorage.removeAlarmRinging();
       res = true;
     } catch (e) {
       debugPrint('[Alarm] (main) SendPort error: $e');

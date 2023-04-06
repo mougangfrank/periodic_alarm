@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:periodic_alarm/model/alarms_model.dart';
 import 'package:periodic_alarm/periodic_alarm.dart';
+import 'package:periodic_alarm/services/alarm_storage.dart';
 
 class AlarmScreen extends StatefulWidget {
   AlarmScreen({super.key});
@@ -13,33 +14,31 @@ class AlarmScreen extends StatefulWidget {
 
 class _AlarmScreenState extends State<AlarmScreen> {
   StreamSubscription? _subscription2;
+  AlarmModel? alarmModel;
 
   @override
   void initState() {
     super.initState();
-    // onStopControl();
+    getAlarm();
   }
 
   @override
   void dispose() {
-    // _subscription2!.cancel();
     super.dispose();
   }
 
-  // onStopControl() {
-  //   _subscription2 = PeriodicAlarm.stopStream.stream.listen(
-  //     (alarmModel) async {
-  //       debugPrint('stopped');
-  //       Navigator.pop(context);
-  //     },
-  //   );
+  getAlarm() async {
+    int? alarmId = await AlarmStorage.getAlarmRinging();
+    AlarmModel? alarm = AlarmStorage.getAlarm(alarmId!);
 
-  //   setState(() {});
-  // }
+    alarmModel = alarm;
+
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
-    final alarmModel = ModalRoute.of(context)!.settings.arguments as AlarmModel;
+    // final alarmModel = ModalRoute.of(context)!.settings.arguments as AlarmModel;
     return Scaffold(
       body: Container(
         child: Center(
@@ -47,17 +46,17 @@ class _AlarmScreenState extends State<AlarmScreen> {
             children: [
               ElevatedButton(
                   onPressed: () {
-                    PeriodicAlarm.stop(alarmModel.id, 3);
+                    PeriodicAlarm.stop(alarmModel!.id, 3);
                     Navigator.pop(context);
                   },
                   child: Text('OFF')),
               ElevatedButton(
                   onPressed: () {
-                    PeriodicAlarm.stop(alarmModel.id, 3);
-                    PeriodicAlarm.cancelAlarm(alarmModel.id);
-                    alarmModel.setDateTime =
-                        alarmModel.dateTime.add(Duration(minutes: 8));
-                    PeriodicAlarm.setOneAlarm(alarmModel: alarmModel);
+                    PeriodicAlarm.stop(alarmModel!.id, 3);
+                    PeriodicAlarm.cancelAlarm(alarmModel!.id);
+                    alarmModel!.setDateTime =
+                        alarmModel!.dateTime.add(Duration(minutes: 8));
+                    PeriodicAlarm.setOneAlarm(alarmModel: alarmModel!);
                     Navigator.pop(context);
                   },
                   child: Text('Snooze'))
