@@ -1,4 +1,6 @@
+## 0.0.28
 
+* bug fixed
 ## 0.0.27
 
 * bug fixed

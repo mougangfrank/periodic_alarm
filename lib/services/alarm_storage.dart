@@ -64,19 +64,22 @@ class AlarmStorage {
   }
 
   static Future<int> getSavedAlarmsNumber() async {
-    final alarms = <AlarmModel>[];
+    final alarmsKey = <int>[];
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.reload();
 
     final keys = prefs.getKeys();
 
-    for (final key in keys) {
+    for (var key in keys) {
       if (key.startsWith(prefix)) {
-        final res = prefs.getString(key);
-        alarms.add(AlarmModel.fromJson(json.decode(res!)));
+        
+        var id = key.replaceAll(prefix, '');
+        alarmsKey.add(int.parse(id));
       }
     }
-    return alarms.length;
+    alarmsKey.sort();
+
+    return alarmsKey.last;
   }
 
   static Future<bool> deleteAlarm(int alarmId) async {
