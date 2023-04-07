@@ -49,7 +49,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    onRingingControl();
+    // onRingingControl();
     PeriodicAlarm.init();
     configureSelectNotificationSubject();
   }
@@ -80,10 +80,10 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Future<void> setAlarm(int id, int time) async {
+  Future<void> setAlarm(int id, DateTime dt) async {
     AlarmModel alarmModel = AlarmModel(
         id: id,
-        dateTime: DateTime.now().add(Duration(seconds: time)),
+        dateTime: dt,
         assetAudioPath: 'assets/0.mp3',
         notificationTitle: 'Alarm is calling',
         notificationBody: 'Tap to turn off the alarm',
@@ -101,9 +101,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   openAlarmScreen() async {
-    Future.delayed(Duration(seconds: 2), () async {
+    Future.delayed(Duration(seconds: 1), () async {
       var alarms = await AlarmStorage.getAlarmRinging();
-      if (alarms.length < 2 && alarms.isNotEmpty) {
+      if (alarms.isNotEmpty) {
         Navigator.pushNamed(context, '/alarmscreen');
       }
     });
@@ -136,8 +136,9 @@ class _HomePageState extends State<HomePage> {
             alarm = value;
             setState(() {});
             if (value) {
-              setAlarm(0, 5);
-              setAlarm(1, 30);
+              setAlarm(0, DateTime(2023, 4, 7, 21, 01, 00));
+              setAlarm(1, DateTime(2023, 4, 7, 21, 01, 00));
+              // setAlarm(1, DateTime(2023, 4, 7, 19, 54 ,00));
               // setAlarm(1, 20);
             }
           },

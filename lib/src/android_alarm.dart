@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:periodic_alarm/model/alarms_model.dart';
-import 'package:periodic_alarm/periodic_alarm.dart';
 import 'package:periodic_alarm/services/alarm_notification.dart';
 import 'package:periodic_alarm/services/alarm_storage.dart';
 
@@ -17,7 +16,6 @@ class AndroidAlarm {
   static int timerDurationSeconds = 5;
   static int secondsToMinutes = 60;
 
-  static int alarmNumber = 8;
   // static String stopPort1 = 'alarm-stop1';
 
   /// Initializes AndroidAlarmManager dependency
@@ -280,34 +278,21 @@ class AndroidAlarm {
   static Future<bool> stop(int id) async {
     bool res;
     try {
-      AlarmModel? alarmModel;
       List<String> isRingingAlarms = await AlarmStorage.getAlarmRinging();
 
       if (isRingingAlarms.length <= 1) {
         final SendPort send =
             IsolateNameServer.lookupPortByName("$stopPort-$id")!;
         send.send('stop');
-        alarmModel = AlarmStorage.getAlarm(id);
-        if (id < alarmNumber && alarmModel!.days.contains(true)) {
-          alarmModel.setDateTime =
-              alarmModel.dateTime.add(const Duration(days: 1));
-          await PeriodicAlarm.setPeriodicAlarm(alarmModel: alarmModel);
-        }
       } else {
         for (int i = 0; i <= isRingingAlarms.length - 1; i++) {
           final SendPort send = IsolateNameServer.lookupPortByName(
               "$stopPort-${isRingingAlarms[i]}")!;
           send.send('stop');
-          alarmModel = AlarmStorage.getAlarm(int.parse(isRingingAlarms[i]));
-          if (int.parse(isRingingAlarms[i]) < alarmNumber &&
-              alarmModel!.days.contains(true)) {
-            alarmModel.setDateTime =
-                alarmModel.dateTime.add(const Duration(days: 1));
-            await PeriodicAlarm.setPeriodicAlarm(alarmModel: alarmModel);
-          }
+          debugPrint('isring: ${isRingingAlarms[i]}');
         }
+        debugPrint('isringLength: ${isRingingAlarms.length}');
       }
-
       await AlarmStorage.removeAlarmRinging();
 
       res = true;

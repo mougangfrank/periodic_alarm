@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:periodic_alarm/model/alarms_model.dart';
 import 'package:periodic_alarm/services/alarm_notification.dart';
 import 'package:periodic_alarm/services/alarm_storage.dart';
 import 'package:periodic_alarm/src/android_alarm.dart';
 
+const alarmNumber = 8;
 class PeriodicAlarm {
   /// Whether it's iOS device.
   static bool get iOS => Platform.isIOS;
@@ -22,12 +22,26 @@ class PeriodicAlarm {
       if (android) AndroidAlarm.init(),
       AlarmNotification.instance.init(),
       AlarmStorage.init(),
+      ringStreamInit()
     ]);
+  }
+
+  static Future<void> ringStreamInit() async {
+    ringStream.stream.listen(
+      (alarmModel) {
+        if(alarmModel.days.contains(true) && alarmModel.id < alarmNumber){
+          PeriodicAlarm.cancelAlarm(alarmModel.id);
+          alarmModel.setDateTime = alarmModel.dateTime.add(const Duration(days: 1));
+          PeriodicAlarm.setPeriodicAlarm(alarmModel: alarmModel);
+        }
+      },
+    );
   }
 
   static Future<void> dispose() async {
     await Future.wait([
       AndroidAlarm.audioPlayer.dispose(),
+      ringStream.close()
     ]);
   }
 

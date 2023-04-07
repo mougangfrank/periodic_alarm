@@ -47,7 +47,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
               ElevatedButton(
                   onPressed: () {
                     PeriodicAlarm.stop(alarmModel!.id);
-                    Navigator.pop(context);
+                    Navigator.of(context).popUntil(ModalRoute.withName('/'));
                   },
                   child: Text('OFF')),
               ElevatedButton(
@@ -59,7 +59,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
                         .add(Duration(seconds: 15));
                     alarmModel!.setActive = true;
                     PeriodicAlarm.setOneAlarm(alarmModel: alarmModel!);
-                    Navigator.pop(context);
+                    Navigator.of(context).popUntil(ModalRoute.withName('/root'));
                   },
                   child: Text('Snooze'))
             ],
