@@ -1,3 +1,6 @@
+## 0.0.29
+
+* alarm stop bug fixed
 ## 0.0.28
 
 * bug fixed

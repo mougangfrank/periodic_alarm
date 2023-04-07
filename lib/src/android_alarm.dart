@@ -68,6 +68,7 @@ class AndroidAlarm {
         alarmClock: true,
         allowWhileIdle: true,
         exact: true,
+        wakeup: true,
         rescheduleOnReboot: true,
         params: alarmModel.toJson());
 
@@ -134,6 +135,7 @@ class AndroidAlarm {
         alarmClock: true,
         allowWhileIdle: true,
         exact: true,
+        wakeup: true,
         rescheduleOnReboot: true,
         params: alarmModel.toJson());
 
@@ -279,12 +281,13 @@ class AndroidAlarm {
   static Future<bool> stop(int id) async {
     bool res;
     try {
-      for (int i = 0; i < await AlarmStorage.getSavedAlarmsNumber(); i++) {
+      for (int i = 0; i <= await AlarmStorage.getSavedAlarmsNumber(); i++) {
         final SendPort send =
             IsolateNameServer.lookupPortByName("$stopPort-$i")!;
         send.send('stop');
       }
       await AlarmStorage.removeAlarmRinging(); 
+      
       res = true;
     } catch (e) {
       debugPrint('[Alarm] (main) SendPort error: $e');
