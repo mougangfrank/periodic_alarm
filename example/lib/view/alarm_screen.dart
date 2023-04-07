@@ -28,8 +28,8 @@ class _AlarmScreenState extends State<AlarmScreen> {
   }
 
   getAlarm() async {
-    int? alarmId = await AlarmStorage.getAlarmRinging();
-    AlarmModel? alarm = AlarmStorage.getAlarm(alarmId!);
+    List<String> alarms = await AlarmStorage.getAlarmRinging();
+    AlarmModel? alarm = AlarmStorage.getAlarm(int.parse(alarms.last));
 
     alarmModel = alarm;
 
@@ -53,9 +53,11 @@ class _AlarmScreenState extends State<AlarmScreen> {
               ElevatedButton(
                   onPressed: () {
                     PeriodicAlarm.stop(alarmModel!.id);
+                    alarmModel!.setId = (alarmModel!.id % 8) + 8;
                     PeriodicAlarm.cancelAlarm(alarmModel!.id);
-                    alarmModel!.setDateTime =
-                        alarmModel!.dateTime.add(Duration(seconds: 10));
+                    alarmModel!.setDateTime = DateTime.now()
+                        .add(Duration(seconds: 15));
+                    alarmModel!.setActive = true;
                     PeriodicAlarm.setOneAlarm(alarmModel: alarmModel!);
                     Navigator.pop(context);
                   },

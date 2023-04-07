@@ -8,6 +8,7 @@ const notificationOnAppKill = 'notificationOnAppKill';
 const notificationOnAppKillTitle = 'notificationOnAppKillTitle';
 const notificationOnAppKillBody = 'notificationOnAppKillBody';
 
+
 class AlarmStorage {
   static late SharedPreferences prefs;
 
@@ -72,7 +73,6 @@ class AlarmStorage {
 
     for (var key in keys) {
       if (key.startsWith(prefix)) {
-        
         var id = key.replaceAll(prefix, '');
         alarmsKey.add(int.parse(id));
       }
@@ -91,21 +91,22 @@ class AlarmStorage {
   static Future<void> saveIsAlarmRinging(int id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.reload();
-    prefs.setInt('isRinging', id);
+    List<String> ringAlarms = await getAlarmRinging();
+    ringAlarms.add(id.toString());
+    prefs.setStringList('isRingingAlarms', ringAlarms);
   }
 
   static Future<bool> removeAlarmRinging() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.reload();
-    bool isRemove = await prefs.remove('isRinging');
+    bool isRemove = await prefs.remove('isRingingAlarms');
     return isRemove;
   }
 
-  static Future<int?> getAlarmRinging() async {
+  static Future<List<String>> getAlarmRinging() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
     await prefs.reload();
-    return prefs.getInt('isRinging');
+    return prefs.getStringList('isRingingAlarms') ?? [];
   }
 
   static AlarmModel? getAlarm(int alarmId) {

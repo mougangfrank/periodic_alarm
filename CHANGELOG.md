@@ -1,3 +1,7 @@
+## 0.0.30
+
+* periodic alarm fixed and stop and snooze bug fixed
+
 ## 0.0.29
 
 * alarm stop bug fixed

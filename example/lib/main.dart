@@ -73,6 +73,8 @@ class _HomePageState extends State<HomePage> {
           setState(() {});
         } else if (element == 'stop') {
           PeriodicAlarm.stop(id!);
+        } else if (element == "") {
+          openAlarmScreen();
         }
       });
     });
@@ -90,12 +92,18 @@ class _HomePageState extends State<HomePage> {
         incMusicTime: 0.15,
         musicVolume: 0.4,
         incMusicVolume: 0.23);
-    PeriodicAlarm.setOneAlarm(alarmModel: alarmModel);
+
+    if (alarmModel.days.contains(true)) {
+      PeriodicAlarm.setPeriodicAlarm(alarmModel: alarmModel);
+    } else {
+      PeriodicAlarm.setOneAlarm(alarmModel: alarmModel);
+    }
   }
 
   openAlarmScreen() async {
-    Future.delayed(Duration(seconds: 1), () async {
-      if (await AlarmStorage.getAlarmRinging() != null) {
+    Future.delayed(Duration(seconds: 2), () async {
+      var alarms = await AlarmStorage.getAlarmRinging();
+      if (alarms.length < 2 && alarms.isNotEmpty) {
         Navigator.pushNamed(context, '/alarmscreen');
       }
     });
@@ -105,10 +113,10 @@ class _HomePageState extends State<HomePage> {
     _subscription = PeriodicAlarm.ringStream.stream.listen(
       (alarmModel) async {
         openAlarmScreen();
-        if (alarmModel.days.contains(true)) {
-          alarmModel.setDateTime = alarmModel.dateTime.add(Duration(days: 1));
-          PeriodicAlarm.setPeriodicAlarm(alarmModel: alarmModel);
-        }
+        // if (alarmModel.days.contains(true)) {
+        //   alarmModel.setDateTime = alarmModel.dateTime.add(Duration(days: 1));
+        //   PeriodicAlarm.setPeriodicAlarm(alarmModel: alarmModel);
+        // }
       },
     );
 
@@ -129,7 +137,7 @@ class _HomePageState extends State<HomePage> {
             setState(() {});
             if (value) {
               setAlarm(0, 5);
-              setAlarm(1, 15);
+              setAlarm(1, 30);
               // setAlarm(1, 20);
             }
           },

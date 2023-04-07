@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:periodic_alarm/model/alarms_model.dart';
+import 'package:periodic_alarm/periodic_alarm.dart';
 import 'package:periodic_alarm/services/alarm_notification.dart';
 import 'package:periodic_alarm/services/alarm_storage.dart';
 
@@ -15,6 +16,8 @@ class AndroidAlarm {
   static String stopPort = 'alarm-stop';
   static int timerDurationSeconds = 5;
   static int secondsToMinutes = 60;
+
+  static int alarmNumber = 8;
   // static String stopPort1 = 'alarm-stop1';
 
   /// Initializes AndroidAlarmManager dependency
@@ -164,10 +167,8 @@ class AndroidAlarm {
   static Future<void> playAlarm(int id, Map<String, dynamic> data) async {
     var alarmModel = AlarmModel.fromJson(data);
     SendPort send = IsolateNameServer.lookupPortByName("$ringPort-$id")!;
-
     send.send('ring');
     if (alarmModel.active) {
-      await AlarmStorage.saveIsAlarmRinging(id);
       playMusic(send, alarmModel, id);
     }
   }
@@ -178,16 +179,14 @@ class AndroidAlarm {
 
     var alarmModel = AlarmModel.fromJson(data);
     SendPort send = IsolateNameServer.lookupPortByName("$ringPort-$id")!;
-
     send.send('ring');
-
     if (alarmModel.days[now.weekday - 1] && alarmModel.active) {
-      await AlarmStorage.saveIsAlarmRinging(id);
       playMusic(send, alarmModel, id);
     }
   }
 
   static playMusic(SendPort send, AlarmModel alarmModel, int id) async {
+    await AlarmStorage.saveIsAlarmRinging(id);
     // ignore: no_leading_underscores_for_local_identifiers
     Timer? _timer;
     try {
@@ -281,13 +280,36 @@ class AndroidAlarm {
   static Future<bool> stop(int id) async {
     bool res;
     try {
-      for (int i = 0; i <= await AlarmStorage.getSavedAlarmsNumber(); i++) {
+      AlarmModel? alarmModel;
+      List<String> isRingingAlarms = await AlarmStorage.getAlarmRinging();
+
+      if (isRingingAlarms.length <= 1) {
         final SendPort send =
-            IsolateNameServer.lookupPortByName("$stopPort-$i")!;
+            IsolateNameServer.lookupPortByName("$stopPort-$id")!;
         send.send('stop');
+        alarmModel = AlarmStorage.getAlarm(id);
+        if (id < alarmNumber && alarmModel!.days.contains(true)) {
+          alarmModel.setDateTime =
+              alarmModel.dateTime.add(const Duration(days: 1));
+          await PeriodicAlarm.setPeriodicAlarm(alarmModel: alarmModel);
+        }
+      } else {
+        for (int i = 0; i <= isRingingAlarms.length - 1; i++) {
+          final SendPort send = IsolateNameServer.lookupPortByName(
+              "$stopPort-${isRingingAlarms[i]}")!;
+          send.send('stop');
+          alarmModel = AlarmStorage.getAlarm(int.parse(isRingingAlarms[i]));
+          if (int.parse(isRingingAlarms[i]) < alarmNumber &&
+              alarmModel!.days.contains(true)) {
+            alarmModel.setDateTime =
+                alarmModel.dateTime.add(const Duration(days: 1));
+            await PeriodicAlarm.setPeriodicAlarm(alarmModel: alarmModel);
+          }
+        }
       }
-      await AlarmStorage.removeAlarmRinging(); 
-      
+
+      await AlarmStorage.removeAlarmRinging();
+
       res = true;
     } catch (e) {
       debugPrint('[Alarm] (main) SendPort error: $e');
