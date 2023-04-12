@@ -1,3 +1,7 @@
+## 0.0.32
+
+* periodic alarm notification bug fixed
+
 ## 0.0.31
 
 ## 0.0.30

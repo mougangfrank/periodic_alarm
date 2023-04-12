@@ -177,9 +177,12 @@ class AndroidAlarm {
 
     var alarmModel = AlarmModel.fromJson(data);
     SendPort send = IsolateNameServer.lookupPortByName("$ringPort-$id")!;
-    send.send('ring');
+    
     if (alarmModel.days[now.weekday - 1] && alarmModel.active) {
       playMusic(send, alarmModel, id);
+    }
+    else{
+      send.send('ring');
     }
   }
 
@@ -278,6 +281,7 @@ class AndroidAlarm {
   static Future<bool> stop(int id) async {
     bool res;
     try {
+      SendPort send1 = IsolateNameServer.lookupPortByName("$ringPort-$id")!;
       List<String> isRingingAlarms = await AlarmStorage.getAlarmRinging();
 
       if (isRingingAlarms.length <= 1) {
@@ -289,11 +293,10 @@ class AndroidAlarm {
           final SendPort send = IsolateNameServer.lookupPortByName(
               "$stopPort-${isRingingAlarms[i]}")!;
           send.send('stop');
-          debugPrint('isring: ${isRingingAlarms[i]}');
         }
-        debugPrint('isringLength: ${isRingingAlarms.length}');
       }
       await AlarmStorage.removeAlarmRinging();
+      send1.send('ring');
 
       res = true;
     } catch (e) {
