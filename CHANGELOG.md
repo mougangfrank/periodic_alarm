@@ -1,3 +1,7 @@
+## 0.0.33
+
+* alarm repeat algorithm changed
+
 ## 0.0.32
 
 * periodic alarm notification bug fixed

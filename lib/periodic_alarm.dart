@@ -22,21 +22,21 @@ class PeriodicAlarm {
       if (android) AndroidAlarm.init(),
       AlarmNotification.instance.init(),
       AlarmStorage.init(),
-      ringStreamInit()
+      // ringStreamInit()
     ]);
   }
 
-  static Future<void> ringStreamInit() async {
-    ringStream.stream.listen(
-      (alarmModel) {
-        if(alarmModel.days.contains(true) && alarmModel.id < alarmNumber){
-          PeriodicAlarm.cancelAlarm(alarmModel.id);
-          alarmModel.setDateTime = alarmModel.dateTime.add(const Duration(days: 1));
-          PeriodicAlarm.setPeriodicAlarm(alarmModel: alarmModel);
-        }
-      },
-    );
-  }
+  // static Future<void> ringStreamInit() async {
+  //   ringStream.stream.listen(
+  //     (alarmModel) {
+  //       if(alarmModel.days.contains(true) && alarmModel.id < alarmNumber){
+  //         PeriodicAlarm.cancelAlarm(alarmModel.id);
+  //         alarmModel.setDateTime = alarmModel.dateTime.add(const Duration(days: 1));
+  //         PeriodicAlarm.setPeriodicAlarm(alarmModel: alarmModel);
+  //       }
+  //     },
+  //   );
+  // }
 
   static Future<void> dispose() async {
     await Future.wait([
