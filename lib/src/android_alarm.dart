@@ -81,8 +81,8 @@ class AndroidAlarm {
         alarmModel.notificationTitle != null &&
         alarmModel.notificationTitle!.isNotEmpty &&
         alarmModel.notificationBody != null &&
-        alarmModel.notificationBody!.isNotEmpty &&
-        alarmModel.active) {
+        alarmModel.notificationBody!.isNotEmpty /* &&
+        alarmModel.active*/) {
       await AlarmNotification.instance.scheduleAlarmNotif(
         id: alarmModel.id,
         dateTime: alarmModel.dateTime,
@@ -148,9 +148,9 @@ class AndroidAlarm {
         alarmModel.notificationTitle != null &&
         alarmModel.notificationTitle!.isNotEmpty &&
         alarmModel.notificationBody != null &&
-        alarmModel.notificationBody!.isNotEmpty &&
+        alarmModel.notificationBody!.isNotEmpty /* &&
         alarmModel.active &&
-        alarmModel.days[DateTime.now().weekday - 1]) {
+        alarmModel.days[DateTime.now().weekday - 1]*/) {
       await AlarmNotification.instance.scheduleAlarmNotif(
         id: alarmModel.id,
         dateTime: alarmModel.dateTime,
@@ -166,9 +166,10 @@ class AndroidAlarm {
     var alarmModel = AlarmModel.fromJson(data);
     SendPort send = IsolateNameServer.lookupPortByName("$ringPort-$id")!;
     send.send('ring');
-    if (alarmModel.active) {
-      playMusic(send, alarmModel, id);
-    }
+    // if (alarmModel.active) {
+    //   playMusic(send, alarmModel, id);
+    // }
+    playMusic(send, alarmModel, id);
   }
 
   @pragma('vm:entry-point')
@@ -177,9 +178,12 @@ class AndroidAlarm {
 
     var alarmModel = AlarmModel.fromJson(data);
     SendPort send = IsolateNameServer.lookupPortByName("$ringPort-$id")!;
-    
+
+    playMusic(send, alarmModel, id);
+    send.send('ring');
+
     if (alarmModel.days[now.weekday - 1] && alarmModel.active) {
-      playMusic(send, alarmModel, id);
+
     }
     else{
       send.send('ring');
@@ -281,7 +285,7 @@ class AndroidAlarm {
   static Future<bool> stop(int id) async {
     bool res;
     try {
-      SendPort send1 = IsolateNameServer.lookupPortByName("$ringPort-$id")!;
+      // SendPort send1 = IsolateNameServer.lookupPortByName("$ringPort-$id")!;
       List<String> isRingingAlarms = await AlarmStorage.getAlarmRinging();
 
       if (isRingingAlarms.length <= 1) {
@@ -296,7 +300,7 @@ class AndroidAlarm {
         }
       }
       await AlarmStorage.removeAlarmRinging();
-      send1.send('ring');
+      // send1.send('ring');
 
       res = true;
     } catch (e) {

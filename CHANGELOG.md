@@ -1,3 +1,7 @@
+## 0.0.34
+
+* alarm notification send function updated
+
 ## 0.0.33
 
 * alarm repeat algorithm changed
