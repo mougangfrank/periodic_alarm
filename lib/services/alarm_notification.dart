@@ -77,18 +77,19 @@ class AlarmNotification {
     return result ?? false;
   }
 
-  tz.TZDateTime nextInstanceOfTime(Time time) {
+  tz.TZDateTime nextInstanceOfTime(DateTime time) {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
 
     tz.TZDateTime scheduledDate = tz.TZDateTime.from(
-      DateTime(
-        now.year,
-        now.month,
-        now.day,
-        time.hour,
-        time.minute,
-        time.second,
-      ),
+      // DateTime(
+      //   now.year,
+      //   now.month,
+      //   now.day,
+      //   time.hour,
+      //   time.minute,
+      //   time.second,
+      // ),
+      time,
       tz.local,
     );
     if (scheduledDate.isBefore(now)) {
@@ -134,13 +135,7 @@ class AlarmNotification {
       android: androidPlatformChannelSpecifics,
     );
 
-    final zdt = nextInstanceOfTime(
-      Time(
-        dateTime.hour,
-        dateTime.minute,
-        dateTime.second,
-      ),
-    );
+    final zdt = nextInstanceOfTime(dateTime);
 
     final hasPermission = await requestPermission();
     if (!hasPermission) {
@@ -155,7 +150,6 @@ class AlarmNotification {
         body,
         zdt,
         platformChannelSpecifics,
-        androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
       );

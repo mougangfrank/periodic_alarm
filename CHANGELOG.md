@@ -1,3 +1,7 @@
+## 0.0.35
+
+* alarm notification wrong time bug fixed
+
 ## 0.0.34
 
 * alarm notification send function updated
