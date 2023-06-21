@@ -3,6 +3,7 @@ import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
@@ -78,11 +79,13 @@ class AndroidAlarm {
         : 'Oluşturulamadı');
 
     if (res &&
-        alarmModel.notificationTitle != null &&
-        alarmModel.notificationTitle!.isNotEmpty &&
-        alarmModel.notificationBody != null &&
-        alarmModel.notificationBody!.isNotEmpty /* &&
-        alarmModel.active*/) {
+            alarmModel.notificationTitle != null &&
+            alarmModel.notificationTitle!.isNotEmpty &&
+            alarmModel.notificationBody != null &&
+            alarmModel
+                .notificationBody!.isNotEmpty /* &&
+        alarmModel.active*/
+        ) {
       await AlarmNotification.instance.scheduleAlarmNotif(
         id: alarmModel.id,
         dateTime: alarmModel.dateTime,
@@ -145,12 +148,14 @@ class AndroidAlarm {
         : 'Oluşturulamadı');
 
     if (res &&
-        alarmModel.notificationTitle != null &&
-        alarmModel.notificationTitle!.isNotEmpty &&
-        alarmModel.notificationBody != null &&
-        alarmModel.notificationBody!.isNotEmpty /* &&
+            alarmModel.notificationTitle != null &&
+            alarmModel.notificationTitle!.isNotEmpty &&
+            alarmModel.notificationBody != null &&
+            alarmModel.notificationBody!
+                .isNotEmpty /* &&
         alarmModel.active &&
-        alarmModel.days[DateTime.now().weekday - 1]*/) {
+        alarmModel.days[DateTime.now().weekday - 1]*/
+        ) {
       await AlarmNotification.instance.scheduleAlarmNotif(
         id: alarmModel.id,
         dateTime: alarmModel.dateTime,
@@ -166,34 +171,31 @@ class AndroidAlarm {
     var alarmModel = AlarmModel.fromJson(data);
     SendPort send = IsolateNameServer.lookupPortByName("$ringPort-$id")!;
     send.send('ring');
-    // if (alarmModel.active) {
-    //   playMusic(send, alarmModel, id);
-    // }
     playMusic(send, alarmModel, id);
   }
 
   @pragma('vm:entry-point')
   static Future<void> playAlarm1(int id, Map<String, dynamic> data) async {
-    var now = DateTime.now();
+    // var now = DateTime.now();
 
     var alarmModel = AlarmModel.fromJson(data);
     SendPort send = IsolateNameServer.lookupPortByName("$ringPort-$id")!;
 
     playMusic(send, alarmModel, id);
     send.send('ring');
-
-    if (alarmModel.days[now.weekday - 1] && alarmModel.active) {
-
-    }
-    else{
-      send.send('ring');
-    }
   }
 
   static playMusic(SendPort send, AlarmModel alarmModel, int id) async {
     await AlarmStorage.saveIsAlarmRinging(id);
     // ignore: no_leading_underscores_for_local_identifiers
-    Timer? _timer;
+
+    final session = await AudioSession.instance;
+    await session.configure(const AudioSessionConfiguration(
+      androidAudioAttributes: AndroidAudioAttributes(
+        usage: AndroidAudioUsage.media,
+      ),
+    ));
+    Timer? timer;
     try {
       final assetAudioPath = alarmModel.assetAudioPath;
 
@@ -218,7 +220,7 @@ class AndroidAlarm {
 
         send.send('Alarm playing with fadeDuration ${musicTime}s');
 
-        _timer = Timer.periodic(
+        timer = Timer.periodic(
           Duration(seconds: timerDurationSeconds),
           (timer) {
             // counter++;
@@ -235,7 +237,7 @@ class AndroidAlarm {
             }
             audioPlayer.setVolume(volume);
             debugPrint('music volume: ${audioPlayer.volume}');
-            if (audioPlayer.volume >= alarmModel.musicVolume) _timer!.cancel();
+            if (audioPlayer.volume >= alarmModel.musicVolume) timer.cancel();
           },
         );
       } else {
@@ -263,7 +265,7 @@ class AndroidAlarm {
         (message) async {
           send.send('(isolate) received: $message');
           if (message == 'stop') {
-            _timer!.cancel();
+            timer!.cancel();
             await audioPlayer.stop();
             // await audioPlayer.dispose();
             port.close();

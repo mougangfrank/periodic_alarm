@@ -1,3 +1,8 @@
+## 0.0.36
+
+* alarm volume type changed
+
+
 ## 0.0.35
 
 * alarm notification wrong time bug fixed

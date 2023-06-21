@@ -87,11 +87,11 @@ class _HomePageState extends State<HomePage> {
         assetAudioPath: 'assets/0.mp3',
         notificationTitle: 'Alarm is calling',
         notificationBody: 'Tap to turn off the alarm',
-        monday: true,
-        tuesday: true,
-        wednesday: true,
-        thursday: true,
-        friday: true,
+        // monday: true,
+        // tuesday: true,
+        // wednesday: true,
+        // thursday: true,
+        // friday: true,
         active: true,
         musicTime: 1,
         incMusicTime: 0.15,
@@ -141,7 +141,7 @@ class _HomePageState extends State<HomePage> {
             alarm = value;
             setState(() {});
             if (value) {
-              setAlarm(0, DateTime.parse('2023-06-12 10:00:00.000'));
+              setAlarm(0, DateTime.parse('2023-06-21 16:12:00.000'));
               // setAlarm(1, DateTime(2023, 4, 7, 21, 01, 00));
               // setAlarm(1, DateTime(2023, 4, 7, 19, 54 ,00));
               // setAlarm(1, 20);
