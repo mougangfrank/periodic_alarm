@@ -1,7 +1,10 @@
+## 0.0.37
+
+* alarm volume type changed 2
+
 ## 0.0.36
 
 * alarm volume type changed
-
 
 ## 0.0.35
 

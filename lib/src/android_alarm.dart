@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:audio_session/audio_session.dart';
+import 'package:control_volume/control_volume.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
@@ -235,6 +236,10 @@ class AndroidAlarm {
                       ((alarmModel.musicTime - alarmModel.incMusicTime) *
                           secondsToMinutes);
             }
+            if (volume > 1.0) {
+              volume = 1.0;
+            }
+            ControlVolume().setVolume(volume, showSystemUI: false);
             audioPlayer.setVolume(volume);
             debugPrint('music volume: ${audioPlayer.volume}');
             if (audioPlayer.volume >= alarmModel.musicVolume) timer.cancel();

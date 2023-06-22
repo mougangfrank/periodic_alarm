@@ -94,9 +94,9 @@ class _HomePageState extends State<HomePage> {
         // friday: true,
         active: true,
         musicTime: 1,
-        incMusicTime: 0.15,
-        musicVolume: 0.4,
-        incMusicVolume: 0.23);
+        incMusicTime: 0.2272243957519531,
+        musicVolume: 1,
+        incMusicVolume:1);
 
     if (alarmModel.days.contains(true)) {
       PeriodicAlarm.setPeriodicAlarm(alarmModel: alarmModel);
