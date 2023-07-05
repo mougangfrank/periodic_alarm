@@ -1,3 +1,7 @@
+## 0.0.41
+
+* bug fix
+
 ## 0.0.37
 
 * alarm volume type changed 2
