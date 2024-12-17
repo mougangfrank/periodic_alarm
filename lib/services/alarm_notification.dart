@@ -63,7 +63,7 @@ class AlarmNotification {
       result = await localNotif
           .resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
-          ?.requestPermission();
+          ?.requestNotificationsPermission(); //requestPermission
     } else {
       result = await localNotif
           .resolvePlatformSpecificImplementation<
@@ -150,8 +150,10 @@ class AlarmNotification {
         body,
         zdt,
         platformChannelSpecifics,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time
       );
       debugPrint(
           '[Alarm] Notification with id $id scheduled successfuly at $zdt');
